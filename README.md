@@ -35,6 +35,8 @@ La ruta pública se define en la aplicación de Coolify. `ALLOWED_ORIGINS` debe 
 ## Contenido y diseño
 
 - 13 categorías reales; las fichas enlazan a las páginas correspondientes del PDF de 81 páginas.
+- El catálogo principal es `public/catalogo-varcun-2026.pdf`, rediseñado con la identidad Varcun: 81 páginas, 126 fichas y 110 códigos únicos. La ruta anterior redirige al catálogo nuevo.
+- Las ocho imágenes principales de categorías se recrearon con fondos navy/aqua y el logo aplicado a los productos; sus archivos terminan en `-varcun.webp`. Se usan también en los diálogos y en Nosotros.
 - Selección de productos para cotización, filtros y búsqueda de categorías, diálogos accesibles, preguntas frecuentes y formulario validado.
 - Diseño responsive, navegación por teclado, foco visible, `prefers-reduced-motion` y control para pausar animaciones.
 - Las técnicas de las fichas no implican plazos, stock, precios ni producción interna garantizados.

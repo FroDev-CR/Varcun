@@ -39,6 +39,7 @@ app.post('/api/quotes', async (request, response) => {
   }
 });
 app.use('/api', (_request, response) => response.status(404).json({ message: 'Ruta no disponible.' }));
+app.get('/catalogo-2026.pdf', (_request, response) => response.redirect(302, '/catalogo-varcun-2026.pdf'));
 app.use(express.static(resolve('dist'), { maxAge: '1h', setHeaders(response, path) { if (path.includes('assets')) response.setHeader('Cache-Control', 'public, max-age=31536000, immutable'); } }));
 app.get('/{*path}', (_request, response) => response.sendFile(resolve('dist/index.html')));
 app.use((error: Error, _request: express.Request, response: express.Response, _next: express.NextFunction) => {
