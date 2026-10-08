@@ -1,0 +1,11 @@
+node_modules
+dist
+dist-server
+.git
+.env*
+tmp
+tools
+artifacts
+*.pdf
+varcun-con-background-asmr.html
+README.md

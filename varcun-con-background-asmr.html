@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VARCUN | Artículos promocionales e impresión</title>
+  <meta name="description" content="Varcun: artículos promocionales, serigrafía, sublimación, litografía e impresión sobre materiales aportados por el cliente." />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: "#092A49",
+            deep: "#061C32",
+            blue: "#125A86",
+            turquoise: "#08BFC4",
+            aqua: "#A5F3F0",
+            mist: "#F3F8FA",
+            ink: "#102A43"
+          },
+          fontFamily: {
+            display: ["Space Grotesk", "sans-serif"],
+            sans: ["DM Sans", "sans-serif"]
+          },
+          boxShadow: {
+            soft: "0 20px 70px rgba(9,42,73,.10)"
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f3f8fa; }
+    .gradient-text {
+      background: linear-gradient(100deg, #092a49, #08bfc4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .outline-text {
+      color: transparent;
+      -webkit-text-stroke: 1.5px #092a49;
+    }
+    .dot-grid {
+      background-image: radial-gradient(#08bfc4 1.2px, transparent 1.2px);
+      background-size: 22px 22px;
+    }
+    .card-hover { transition: transform .3s ease, box-shadow .3s ease; }
+    .card-hover:hover { transform: translateY(-7px); box-shadow: 0 20px 55px rgba(9,42,73,.14); }
+    .marquee { animation: marquee 24s linear infinite; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  </style>
+
+<style>
+#asmr-background{position:fixed;inset:0;width:100%;height:100%;z-index:-2;background:#061c32;pointer-events:none}
+.background-overlay{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 15% 20%,rgba(8,191,196,.16),transparent 30%),radial-gradient(circle at 85% 70%,rgba(18,90,134,.2),transparent 32%),linear-gradient(rgba(6,28,50,.72),rgba(6,28,50,.72))}
+.glass-section{background:rgba(243,248,250,.94);backdrop-filter:blur(12px)}
+</style>
+</head>
+
+<body class="font-sans text-ink">
+<canvas id="asmr-background" aria-hidden="true"></canvas><div class="background-overlay"></div>
+
+  <!-- Barra superior -->
+  <div class="bg-deep text-white text-xs">
+    <div class="max-w-7xl mx-auto px-5 lg:px-10 py-2 flex flex-wrap justify-between gap-2">
+      <span>Producción personalizada para empresas, eventos y emprendimientos.</span>
+      <span class="text-aqua">Atención: lunes a sábado · 8:00 a. m. – 5:00 p. m.</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-5 lg:px-10">
+      <div class="h-20 flex items-center justify-between gap-5">
+        <a href="#inicio" class="flex items-center gap-3 shrink-0">
+          <div class="w-12 h-12 rounded-2xl bg-navy flex items-center justify-center">
+            <svg viewBox="0 0 48 48" class="w-10 h-10" fill="none" aria-hidden="true">
+              <path d="M7 10 18 28h6L39 10" stroke="#08BFC4" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="m13 22 11 15 11-15" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-display font-bold tracking-[.22em] text-2xl text-navy">VARCUN</div>
+            <div class="text-[9px] uppercase tracking-[.15em] text-slate-500">Impresión · Diseño · Marca</div>
+          </div>
+        </a>
+
+        <nav class="hidden lg:flex items-center gap-7 text-sm font-semibold">
+          <a href="#inicio" class="hover:text-turquoise transition">Inicio</a>
+          <a href="#servicios" class="hover:text-turquoise transition">Servicios</a>
+          <a href="#catalogo" class="hover:text-turquoise transition">Catálogo</a>
+          <a href="#proceso" class="hover:text-turquoise transition">Cómo trabajamos</a>
+          <a href="#nosotros" class="hover:text-turquoise transition">Nosotros</a>
+        </nav>
+
+        <a href="#contacto" class="hidden sm:inline-flex items-center gap-2 rounded-full bg-navy text-white px-5 py-3 text-sm font-bold hover:bg-turquoise hover:text-navy transition">
+          Cotizar ahora <span>↗</span>
+        </a>
+
+        <button id="menuButton" class="lg:hidden rounded-xl border border-slate-200 p-3 text-navy" aria-label="Abrir menú">☰</button>
+      </div>
+
+      <nav id="mobileMenu" class="hidden lg:hidden pb-5 flex-col gap-4 text-sm font-semibold">
+        <a href="#inicio">Inicio</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#catalogo">Catálogo</a>
+        <a href="#proceso">Cómo trabajamos</a>
+        <a href="#nosotros">Nosotros</a>
+        <a href="#contacto" class="text-turquoise">Solicitar cotización ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section id="inicio" class="relative overflow-hidden bg-white">
+      <div class="absolute right-0 top-0 w-[42%] h-full bg-mist hidden lg:block"></div>
+      <div class="absolute right-10 top-12 w-48 h-48 dot-grid opacity-40"></div>
+      <div class="max-w-7xl mx-auto px-5 lg:px-10 py-16 lg:py-24 relative">
+        <div class="grid lg:grid-cols-2 gap-14 items-center">
+          <div class="relative z-10">
+            <div class="inline-flex items-center gap-2 border border-turquoise/30 rounded-full bg-turquoise/5 px-4 py-2 text-xs font-bold uppercase tracking-[.16em] text-blue">
+              <span class="w-2 h-2 rounded-full bg-turquoise"></span>
+              Tu idea, nuestra impresión
+            </div>
+
+            <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl font-bold leading-[.98] tracking-tight text-navy mt-7">
+              TU MARCA.
+              <br />
+              <span class="gradient-text">TU ESTILO.</span>
+              <br />
+              <span class="outline-text">IMPRESO.</span>
+            </h1>
+
+            <p class="mt-7 text-lg leading-relaxed text-slate-600 max-w-xl">
+              Artículos promocionales, personalización e impresión profesional para que cada detalle de tu marca hable por ti.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a href="#catalogo" class="rounded-full bg-navy text-white px-6 py-4 font-bold hover:bg-turquoise hover:text-navy transition">Explorar catálogo ↗</a>
+              <a href="#servicios" class="rounded-full border border-navy/20 bg-white px-6 py-4 font-bold hover:border-turquoise hover:text-turquoise transition">Ver servicios</a>
+            </div>
+
+            <div class="mt-10 flex flex-wrap gap-7 border-t border-slate-200 pt-6">
+              <div>
+                <div class="font-display text-2xl font-bold text-navy">4+</div>
+                <div class="text-xs text-slate-500 mt-1">Técnicas de impresión</div>
+              </div>
+              <div>
+                <div class="font-display text-2xl font-bold text-navy">100%</div>
+                <div class="text-xs text-slate-500 mt-1">Atención personalizada</div>
+              </div>
+              <div>
+                <div class="font-display text-2xl font-bold text-navy">∞</div>
+                <div class="text-xs text-slate-500 mt-1">Ideas por crear</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative z-10">
+            <div class="rounded-[2rem] bg-navy p-4 sm:p-5 shadow-2xl shadow-navy/20">
+              <div class="relative overflow-hidden rounded-[1.5rem] aspect-[4/5]">
+                <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1000&q=85" alt="Camiseta personalizada" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/10 to-transparent"></div>
+                <div class="absolute left-6 right-6 bottom-6 text-white">
+                  <div class="text-xs uppercase tracking-[.22em] text-aqua mb-2">Varcun Studio</div>
+                  <div class="font-display text-3xl sm:text-4xl font-bold leading-tight">HECHO PARA<br />DESTACAR.</div>
+                  <div class="mt-3 text-sm text-slate-200">Diseño que se convierte en algo real.</div>
+                </div>
+              </div>
+            </div>
+            <div class="absolute -bottom-5 -left-4 bg-white rounded-2xl p-4 shadow-soft flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-turquoise/15 flex items-center justify-center text-2xl">✦</div>
+              <div>
+                <div class="font-bold text-navy text-sm">Tu identidad</div>
+                <div class="text-xs text-slate-500">En cada detalle.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Franja de especialidades -->
+    <section class="bg-navy text-white overflow-hidden py-5">
+      <div class="whitespace-nowrap flex w-max marquee">
+        <div class="flex items-center gap-8 px-4 text-sm sm:text-base font-display font-semibold">
+          <span>Serigrafía</span><span class="text-turquoise">✦</span>
+          <span>Sublimación</span><span class="text-turquoise">✦</span>
+          <span>Litografía</span><span class="text-turquoise">✦</span>
+          <span>Artículos promocionales</span><span class="text-turquoise">✦</span>
+          <span>Diseño personalizado</span><span class="text-turquoise">✦</span>
+        </div>
+        <div class="flex items-center gap-8 px-4 text-sm sm:text-base font-display font-semibold">
+          <span>Serigrafía</span><span class="text-turquoise">✦</span>
+          <span>Sublimación</span><span class="text-turquoise">✦</span>
+          <span>Litografía</span><span class="text-turquoise">✦</span>
+          <span>Artículos promocionales</span><span class="text-turquoise">✦</span>
+          <span>Diseño personalizado</span><span class="text-turquoise">✦</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Servicios -->
+    <section id="servicios" class="py-20 lg:py-28">
+      <div class="max-w-7xl mx-auto px-5 lg:px-10">
+        <div class="max-w-2xl mb-12">
+          <p class="text-xs font-bold uppercase tracking-[.2em] text-turquoise mb-4">Nuestros servicios</p>
+          <h2 class="font-display text-4xl sm:text-5xl font-bold text-navy leading-tight">Todo lo que necesitas para <span class="gradient-text">hacer visible tu marca.</span></h2>
+          <p class="mt-5 text-lg text-slate-600">Desde un producto terminado hasta la impresión de materiales que ya tienes en tus manos.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <article class="card-hover bg-white rounded-3xl border border-slate-100 p-8 lg:p-10 relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-turquoise/10"></div>
+            <div class="relative">
+              <div class="flex justify-between items-start">
+                <div class="w-14 h-14 rounded-2xl bg-navy text-white flex items-center justify-center text-2xl">◈</div>
+                <span class="font-display text-6xl font-bold text-slate-100">01</span>
+              </div>
+              <h3 class="font-display text-3xl font-bold text-navy mt-9">Artículos<br /><span class="text-turquoise">promocionales.</span></h3>
+              <p class="mt-5 text-slate-600 leading-relaxed">Creamos productos personalizados para empresas, eventos, regalos corporativos y emprendimientos.</p>
+              <div class="flex flex-wrap gap-2 mt-6">
+                <span class="rounded-full bg-slate-100 px-3 py-2 text-xs">Camisetas</span>
+                <span class="rounded-full bg-slate-100 px-3 py-2 text-xs">Tazas</span>
+                <span class="rounded-full bg-slate-100 px-3 py-2 text-xs">Termos</span>
+                <span class="rounded-full bg-slate-100 px-3 py-2 text-xs">Gorras</span>
+                <span class="rounded-full bg-slate-100 px-3 py-2 text-xs">Bolsas</span>
+                <span class="rounded-full bg-slate-100 px-3 py-2 text-xs">Papelería</span>
+              </div>
+              <a href="#catalogo" class="inline-block mt-8 text-sm font-bold text-navy hover:text-turquoise">Ver productos →</a>
+            </div>
+          </article>
+
+          <article class="card-hover bg-navy rounded-3xl p-8 lg:p-10 text-white relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-56 h-56 rounded-full border border-turquoise/30"></div>
+            <div class="relative">
+              <div class="flex justify-between items-start">
+                <div class="w-14 h-14 rounded-2xl bg-turquoise text-navy flex items-center justify-center text-2xl">✳</div>
+                <span class="font-display text-6xl font-bold text-white/10">02</span>
+              </div>
+              <h3 class="font-display text-3xl font-bold mt-9">Tú aportas<br /><span class="text-turquoise">el material.</span></h3>
+              <p class="mt-5 text-slate-300 leading-relaxed">¿Ya tienes camisetas, textiles, artículos u otros materiales? Nosotros nos encargamos de imprimir tus diseños.</p>
+              <div class="flex flex-wrap gap-2 mt-6">
+                <span class="rounded-full bg-white/10 px-3 py-2 text-xs">Serigrafía</span>
+                <span class="rounded-full bg-white/10 px-3 py-2 text-xs">Sublimación</span>
+                <span class="rounded-full bg-white/10 px-3 py-2 text-xs">Impresión</span>
+                <span class="rounded-full bg-white/10 px-3 py-2 text-xs">Litografía</span>
+              </div>
+              <a href="#contacto" class="inline-block mt-8 text-sm font-bold text-turquoise hover:text-white">Solicitar servicio →</a>
+            </div>
+          </article>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-8">
+          <div class="bg-white rounded-2xl p-6 border border-slate-100">
+            <div class="text-3xl mb-4">▦</div><h3 class="font-bold text-navy">Serigrafía</h3><p class="text-sm text-slate-500 mt-2">Acabados resistentes para textiles y producciones promocionales.</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 border border-slate-100">
+            <div class="text-3xl mb-4">◌</div><h3 class="font-bold text-navy">Sublimación</h3><p class="text-sm text-slate-500 mt-2">Colores vibrantes para regalos y productos personalizados.</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 border border-slate-100">
+            <div class="text-3xl mb-4">▤</div><h3 class="font-bold text-navy">Litografía</h3><p class="text-sm text-slate-500 mt-2">Papelería, tarjetas, volantes y materiales corporativos.</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 border border-slate-100">
+            <div class="text-3xl mb-4">✎</div><h3 class="font-bold text-navy">Asesoría</h3><p class="text-sm text-slate-500 mt-2">Te ayudamos a elegir el material y acabado adecuado.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Catálogo -->
+    <section id="catalogo" class="bg-white py-20 lg:py-28">
+      <div class="max-w-7xl mx-auto px-5 lg:px-10">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[.2em] text-turquoise mb-4">Catálogo de muestra</p>
+            <h2 class="font-display text-4xl sm:text-5xl font-bold text-navy">Productos que <span class="gradient-text">hablan por ti.</span></h2>
+          </div>
+          <p class="text-slate-500 max-w-md">Estos son ejemplos de productos que podemos personalizar. Solicita una cotización según cantidades, materiales y diseño.</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <article class="group">
+            <div class="aspect-square rounded-2xl overflow-hidden bg-slate-100">
+              <img src="https://images.unsplash.com/photo-1503341504253-dff4815485f1?auto=format&fit=crop&w=800&q=85" alt="Camisetas personalizadas" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+            </div>
+            <div class="mt-4 text-xs font-bold uppercase tracking-widest text-turquoise">Textiles</div>
+            <h3 class="font-display text-xl font-bold text-navy mt-1">Camisetas personalizadas</h3>
+            <p class="text-sm text-slate-500 mt-2">Para equipos, marcas, actividades y eventos.</p>
+            <button class="mt-4 text-sm font-bold text-navy hover:text-turquoise" onclick="selectProduct('Camisetas personalizadas')">Solicitar información →</button>
+          </article>
+
+          <article class="group">
+            <div class="aspect-square rounded-2xl overflow-hidden bg-slate-100">
+              <img src="https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=800&q=85" alt="Tazas personalizadas" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+            </div>
+            <div class="mt-4 text-xs font-bold uppercase tracking-widest text-turquoise">Regalos</div>
+            <h3 class="font-display text-xl font-bold text-navy mt-1">Tazas personalizadas</h3>
+            <p class="text-sm text-slate-500 mt-2">Detalles especiales para clientes y colaboradores.</p>
+            <button class="mt-4 text-sm font-bold text-navy hover:text-turquoise" onclick="selectProduct('Tazas personalizadas')">Solicitar información →</button>
+          </article>
+
+          <article class="group">
+            <div class="aspect-square rounded-2xl overflow-hidden bg-slate-100">
+              <img src="https://images.unsplash.com/photo-1603252110481-7ba873bf42ab?auto=format&fit=crop&w=800&q=85" alt="Gorras personalizadas" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+            </div>
+            <div class="mt-4 text-xs font-bold uppercase tracking-widest text-turquoise">Promocionales</div>
+            <h3 class="font-display text-xl font-bold text-navy mt-1">Gorras y accesorios</h3>
+            <p class="text-sm text-slate-500 mt-2">Haz que tu marca acompañe a tus clientes.</p>
+            <button class="mt-4 text-sm font-bold text-navy hover:text-turquoise" onclick="selectProduct('Gorras y accesorios')">Solicitar información →</button>
+          </article>
+
+          <article class="group">
+            <div class="aspect-square rounded-2xl overflow-hidden bg-slate-100">
+              <img src="https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=800&q=85" alt="Papelería corporativa" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+            </div>
+            <div class="mt-4 text-xs font-bold uppercase tracking-widest text-turquoise">Corporativo</div>
+            <h3 class="font-display text-xl font-bold text-navy mt-1">Papelería corporativa</h3>
+            <p class="text-sm text-slate-500 mt-2">Tarjetas, volantes, etiquetas y material impreso.</p>
+            <button class="mt-4 text-sm font-bold text-navy hover:text-turquoise" onclick="selectProduct('Papelería corporativa')">Solicitar información →</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Beneficios -->
+    <section class="py-20">
+      <div class="max-w-7xl mx-auto px-5 lg:px-10">
+        <div class="rounded-[2rem] bg-mist p-8 lg:p-12">
+          <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[.2em] text-turquoise mb-4">La experiencia Varcun</p>
+              <h2 class="font-display text-4xl sm:text-5xl font-bold text-navy leading-tight">Tu proyecto merece <span class="gradient-text">atención al detalle.</span></h2>
+              <p class="mt-5 text-slate-600 leading-relaxed">Trabajamos para que el resultado final refleje la calidad y personalidad de tu marca, desde la elección del producto hasta el acabado.</p>
+              <a href="#contacto" class="inline-flex mt-7 rounded-full bg-navy text-white px-6 py-4 font-bold hover:bg-turquoise hover:text-navy transition">Hablemos de tu proyecto ↗</a>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div class="bg-white rounded-2xl p-6"><div class="text-2xl text-turquoise">✓</div><h3 class="font-bold text-navy mt-4">Asesoría cercana</h3><p class="text-sm text-slate-500 mt-2">Te orientamos según tu objetivo y presupuesto.</p></div>
+              <div class="bg-white rounded-2xl p-6"><div class="text-2xl text-turquoise">✓</div><h3 class="font-bold text-navy mt-4">Personalización</h3><p class="text-sm text-slate-500 mt-2">Cada pedido se adapta a la identidad de tu marca.</p></div>
+              <div class="bg-white rounded-2xl p-6"><div class="text-2xl text-turquoise">✓</div><h3 class="font-bold text-navy mt-4">Claridad</h3><p class="text-sm text-slate-500 mt-2">Cotizaciones claras y comunicación durante el proceso.</p></div>
+              <div class="bg-white rounded-2xl p-6"><div class="text-2xl text-turquoise">✓</div><h3 class="font-bold text-navy mt-4">Versatilidad</h3><p class="text-sm text-slate-500 mt-2">Productos y técnicas para diferentes necesidades.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Proceso -->
+    <section id="proceso" class="bg-navy text-white py-20 lg:py-28">
+      <div class="max-w-7xl mx-auto px-5 lg:px-10">
+        <div class="max-w-2xl">
+          <p class="text-xs font-bold uppercase tracking-[.2em] text-turquoise mb-4">Cómo trabajamos</p>
+          <h2 class="font-display text-4xl sm:text-5xl font-bold leading-tight">De la idea al producto <span class="text-turquoise">en cuatro pasos.</span></h2>
+        </div>
+        <div class="grid md:grid-cols-4 gap-5 mt-12">
+          <div class="border-t border-white/20 pt-5"><div class="font-display text-5xl font-bold text-turquoise">01</div><h3 class="font-bold text-xl mt-5">Cuéntanos</h3><p class="text-slate-300 text-sm mt-3">Explícanos qué necesitas, para qué fecha y en qué cantidad.</p></div>
+          <div class="border-t border-white/20 pt-5"><div class="font-display text-5xl font-bold text-turquoise">02</div><h3 class="font-bold text-xl mt-5">Definimos</h3><p class="text-slate-300 text-sm mt-3">Elegimos producto, técnica, materiales y acabados.</p></div>
+          <div class="border-t border-white/20 pt-5"><div class="font-display text-5xl font-bold text-turquoise">03</div><h3 class="font-bold text-xl mt-5">Cotizamos</h3><p class="text-slate-300 text-sm mt-3">Recibes una propuesta de acuerdo con tu proyecto.</p></div>
+          <div class="border-t border-white/20 pt-5"><div class="font-display text-5xl font-bold text-turquoise">04</div><h3 class="font-bold text-xl mt-5">Producimos</h3><p class="text-slate-300 text-sm mt-3">Convertimos tu idea en un producto listo para destacar.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nosotros -->
+    <section id="nosotros" class="py-20 lg:py-28">
+      <div class="max-w-7xl mx-auto px-5 lg:px-10">
+        <div class="grid lg:grid-cols-2 gap-14 items-center">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[.2em] text-turquoise mb-4">Sobre Varcun</p>
+            <h2 class="font-display text-4xl sm:text-5xl font-bold text-navy leading-tight">Más que imprimir. <span class="gradient-text">Damos forma a tus ideas.</span></h2>
+            <p class="mt-6 text-lg text-slate-600 leading-relaxed">En Varcun creemos que una impresión bien hecha puede convertir un objeto cotidiano en una experiencia de marca.</p>
+            <p class="mt-4 text-slate-600 leading-relaxed">Somos un aliado para empresas, emprendedores y personas que buscan artículos promocionales y soluciones de impresión con un enfoque creativo y profesional.</p>
+          </div>
+          <div class="bg-white rounded-[2rem] p-10 shadow-soft relative overflow-hidden">
+            <div class="absolute -right-20 -top-20 w-64 h-64 rounded-full border border-turquoise/30"></div>
+            <div class="relative">
+              <div class="text-6xl text-turquoise font-display">“</div>
+              <p class="font-display text-3xl sm:text-4xl font-bold text-navy leading-tight mt-3">La creatividad también se imprime.</p>
+              <div class="mt-10 text-xs uppercase tracking-[.2em] text-slate-500">Varcun · Diseño que comunica</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="pb-20 lg:pb-28">
+      <div class="max-w-7xl mx-auto px-5 lg:px-10">
+        <div class="rounded-[2rem] bg-gradient-to-br from-navy to-blue p-8 sm:p-12 lg:p-16 text-white relative overflow-hidden">
+          <div class="absolute -right-28 -top-28 w-96 h-96 rounded-full border border-turquoise/30"></div>
+          <div class="absolute right-20 -bottom-40 w-96 h-96 rounded-full bg-turquoise/10 blur-3xl"></div>
+          <div class="relative grid lg:grid-cols-2 gap-12">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[.2em] text-turquoise mb-5">Comencemos tu proyecto</p>
+              <h2 class="font-display text-4xl sm:text-5xl font-bold leading-tight">¿Qué vamos a imprimir hoy?</h2>
+              <p class="mt-5 text-slate-300 text-lg">Completa el formulario de muestra y cuéntanos qué tienes en mente.</p>
+              <div class="mt-8 space-y-3 text-sm text-slate-200">
+                <p>✦ WhatsApp: +506 8888-0000</p>
+                <p>✦ Correo: hola@varcun.cr</p>
+                <p>✦ San José, Costa Rica</p>
+              </div>
+            </div>
+
+            <form id="quoteForm" class="bg-white rounded-3xl p-6 sm:p-8 text-ink">
+              <h3 class="font-display text-2xl font-bold text-navy">Solicita una cotización</h3>
+              <p class="text-sm text-slate-500 mt-2 mb-5">Datos demostrativos: el formulario no envía información real.</p>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <label class="text-sm font-semibold">Nombre
+                  <input required name="name" class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-turquoise" placeholder="Tu nombre" />
+                </label>
+                <label class="text-sm font-semibold">Teléfono
+                  <input required name="phone" class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-turquoise" placeholder="8888-0000" />
+                </label>
+              </div>
+              <label class="block text-sm font-semibold mt-4">Correo electrónico
+                <input type="email" required name="email" class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-turquoise" placeholder="nombre@correo.com" />
+              </label>
+              <label class="block text-sm font-semibold mt-4">¿Qué necesitas?
+                <select id="productSelect" name="product" class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-turquoise">
+                  <option>Camisetas personalizadas</option>
+                  <option>Tazas y termos</option>
+                  <option>Gorras y accesorios</option>
+                  <option>Papelería corporativa</option>
+                  <option>Imprimir mi propio material</option>
+                  <option>Otro proyecto</option>
+                </select>
+              </label>
+              <label class="block text-sm font-semibold mt-4">Cuéntanos más
+                <textarea name="message" rows="3" class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-turquoise" placeholder="Cantidad, fecha, colores, medidas..."></textarea>
+              </label>
+              <button class="mt-5 w-full rounded-full bg-navy text-white py-4 font-bold hover:bg-turquoise hover:text-navy transition">Enviar solicitud de muestra ↗</button>
+              <p id="formMessage" class="hidden mt-4 rounded-xl bg-turquoise/10 p-3 text-sm text-navy"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-5 lg:px-10 py-12">
+      <div class="grid md:grid-cols-4 gap-10">
+        <div class="md:col-span-2">
+          <div class="font-display text-3xl font-bold tracking-[.2em] text-navy">VARCUN</div>
+          <p class="text-slate-500 text-sm mt-4 max-w-sm">Artículos promocionales e impresión para ideas que merecen convertirse en algo real.</p>
+        </div>
+        <div>
+          <h3 class="font-bold text-navy mb-4">Explora</h3>
+          <div class="space-y-3 text-sm text-slate-500">
+            <a class="block hover:text-turquoise" href="#servicios">Servicios</a>
+            <a class="block hover:text-turquoise" href="#catalogo">Catálogo</a>
+            <a class="block hover:text-turquoise" href="#proceso">Proceso</a>
+            <a class="block hover:text-turquoise" href="#contacto">Contacto</a>
+          </div>
+        </div>
+        <div>
+          <h3 class="font-bold text-navy mb-4">Contacto</h3>
+          <div class="space-y-3 text-sm text-slate-500">
+            <p>+506 8888-0000</p>
+            <p>hola@varcun.cr</p>
+            <p>San José, Costa Rica</p>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-slate-200 mt-10 pt-6 flex flex-col sm:flex-row justify-between gap-3 text-xs text-slate-400">
+        <p>© 2026 Varcun. Todos los derechos reservados.</p>
+        <p>Diseñado para imprimir ideas.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuButton = document.getElementById("menuButton");
+    const mobileMenu = document.getElementById("mobileMenu");
+    menuButton.addEventListener("click", () => mobileMenu.classList.toggle("hidden"));
+    mobileMenu.querySelectorAll("a").forEach(link => link.addEventListener("click", () => mobileMenu.classList.add("hidden")));
+
+    function selectProduct(product) {
+      document.getElementById("productSelect").value = product;
+      document.getElementById("contacto").scrollIntoView({ behavior: "smooth" });
+    }
+
+    document.getElementById("quoteForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+      const message = document.getElementById("formMessage");
+      message.textContent = "¡Gracias! Esta es una demostración del formulario. En la versión final conectaremos este botón con WhatsApp, correo o un sistema de cotizaciones.";
+      message.classList.remove("hidden");
+    });
+  </script>
+\n<script>\nconst canvas=document.getElementById('asmr-background'),ctx=canvas.getContext('2d');\nconst mouse={x:-1000,y:-1000};let width=0,height=0,particles=[],frame=0;\nconst count=innerWidth<768?350:700,radius=280;\nclass Particle{constructor(){this.reset()}reset(){this.x=Math.random()*width;this.y=Math.random()*height;this.size=Math.random()*1.7+.45;this.vx=(Math.random()-.5)*.18;this.vy=(Math.random()-.5)*.18;this.glass=Math.random()>.68;this.alpha=Math.random()*.35+.08;this.rotation=Math.random()*Math.PI*2;this.rotationSpeed=(Math.random()-.5)*.04;this.glow=0}update(){let dx=mouse.x-this.x,dy=mouse.y-this.y,d=Math.max(Math.hypot(dx,dy),.001);if(d<radius){let f=(radius-d)/radius;this.vx+=(dx/d)*f*.075;this.vy+=(dy/d)*f*.075;this.vx+=(dy/d)*f*.045*10;this.vy-=(dx/d)*f*.045*10;this.glow=f*.75}else this.glow*=.92;this.x+=this.vx;this.y+=this.vy;this.vx*=.95;this.vy*=.95;this.vx+=(Math.random()-.5)*.025;this.vy+=(Math.random()-.5)*.025;this.rotation+=this.rotationSpeed+(Math.abs(this.vx)+Math.abs(this.vy))*.05;if(this.x<-20)this.x=width+20;if(this.x>width+20)this.x=-20;if(this.y<-20)this.y=height+20;if(this.y>height+20)this.y=-20}draw(){ctx.save();ctx.translate(this.x,this.y);ctx.rotate(this.rotation);let a=Math.min(this.alpha+this.glow,.85),c=this.glass?'100,240,235':'140,180,205';ctx.fillStyle=`rgba(${c},${a})`;if(this.glow>.25){ctx.shadowBlur=10*this.glow;ctx.shadowColor=`rgba(8,191,196,${this.glow})`}ctx.beginPath();ctx.moveTo(0,-this.size*2.5);ctx.lineTo(this.size,0);ctx.lineTo(0,this.size*2.5);ctx.lineTo(-this.size,0);ctx.closePath();ctx.fill();ctx.restore()}}\nfunction init(){width=canvas.width=innerWidth;height=canvas.height=innerHeight;particles=Array.from({length:count},()=>new Particle())}\nfunction render(){ctx.fillStyle='rgba(6,28,50,.22)';ctx.fillRect(0,0,width,height);particles.forEach(p=>{p.update();p.draw()});frame=requestAnimationFrame(render)}\naddEventListener('resize',init);addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});addEventListener('touchmove',e=>{if(e.touches[0]){mouse.x=e.touches[0].clientX;mouse.y=e.touches[0].clientY}},{passive:true});init();render();\n</script>\n</body>
+</html>

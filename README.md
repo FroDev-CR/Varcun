@@ -1,0 +1,40 @@
+# Varcun
+
+Landing en español con React, TypeScript, Tailwind CSS 4 y Vite. El servidor Node/Express recibe cotizaciones y las registra en Supabase autoalojado. Imágenes, categorías y fichas provienen del catálogo PDF 2026 existente. Se conserva el símbolo SVG y la paleta de la página original.
+
+## Desarrollo
+
+Requiere Node 24 y pnpm 11.25.0.
+
+```sh
+pnpm install
+pnpm dev
+pnpm build
+pnpm test
+pnpm start
+```
+
+`pnpm dev` sirve el frontend en el puerto 5173 y reenvía `/api` al servidor en 3000. Para probar el formulario inicia también `node --env-file=.env dist-server/index.js` después de construir. Sin configuración de Supabase el endpoint responde 503 y nunca simula una solicitud recibida.
+
+## Supabase
+
+Aplica `supabase/migrations/20261008_varcun_quotes.sql` a la instancia elegida. La migración añade solamente `public.varcun_quote_requests` y el rol sin login `varcun_quote_writer`. RLS impide acceso público a las solicitudes. El rol de la web tiene exclusivamente INSERT; no puede leer, actualizar ni borrar solicitudes ni acceder a tablas de otras aplicaciones. Genera un JWT de ese rol en el servidor y configúralo como `SUPABASE_WRITE_KEY` en Coolify. Configura también `SUPABASE_ANON_KEY` para pasar la autenticación del gateway Kong; el JWT de escritura viaja en Authorization. No uses una clave con prefijo `VITE_`.
+
+Las solicitudes guardan nombre, correo, teléfono opcional, empresa opcional, categoría, cantidad, mensaje, productos y consentimiento. El formulario no envía correos ni mensajes WhatsApp. Las cotizaciones registradas se consultan en Supabase con una cuenta administrativa. El UUID de cada solicitud evita duplicados al reintentar después de un fallo de conexión.
+
+## Coolify
+
+Repositorio: `https://github.com/FroDev-CR/Varcun.git`, rama `main`. Crear un proyecto y una aplicación independientes con build pack Dockerfile, `/Dockerfile`, puerto 3000 y healthcheck `/api/health`. Configurar las variables runtime de `.env.example` en Coolify. `SUPABASE_URL` debe ser la dirección interna del servicio Kong en la red Docker existente. El contenedor usa un usuario sin privilegios, CSP y limitación de solicitudes.
+
+La ruta pública se define en la aplicación de Coolify. `ALLOWED_ORIGINS` debe incluir el origen exacto de la web. Activar `PUBLIC_HTTPS=true` únicamente al publicar con HTTPS. No se incluyen contraseñas ni claves en el repositorio.
+
+## Contenido y diseño
+
+- 13 categorías reales; las fichas enlazan a las páginas correspondientes del PDF de 81 páginas.
+- Selección de productos para cotización, filtros y búsqueda de categorías, diálogos accesibles, preguntas frecuentes y formulario validado.
+- Diseño responsive, navegación por teclado, foco visible, `prefers-reduced-motion` y control para pausar animaciones.
+- Las técnicas de las fichas no implican plazos, stock, precios ni producción interna garantizados.
+- El sitio no publica teléfono, correo, dirección ni horarios de muestra presentes en el HTML original.
+- `varcun-con-background-asmr.html` se conserva como referencia original.
+
+No se ha recibido un archivo de logo separado; se conserva exactamente el símbolo SVG de la web original.

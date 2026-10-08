@@ -1,0 +1,14 @@
+node_modules/
+dist/
+dist-server/
+.env
+.env.*
+!.env.example
+tmp/
+tools/server_admin.py
+tools/inspect_server.sh
+tools/*coolify*
+tools/*remote*
+artifacts/
+*.tar.gz
+/*.pdf
