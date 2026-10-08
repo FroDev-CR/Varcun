@@ -10,9 +10,17 @@ const port = Number(process.env.PORT || 3000);
 const database = process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY && process.env.SUPABASE_WRITE_KEY ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false }, global: { headers: { Authorization: `Bearer ${process.env.SUPABASE_WRITE_KEY}` } } }) : null;
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
-app.use(helmet({ contentSecurityPolicy: { directives: {
-  defaultSrc: ["'self'"], scriptSrc: ["'self'"], styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'], fontSrc: ["'self'", 'https://fonts.gstatic.com'], imgSrc: ["'self'", 'data:'], connectSrc: ["'self'"], objectSrc: ["'none'"], baseUri: ["'self'"], formAction: ["'self'"], upgradeInsecureRequests: process.env.PUBLIC_HTTPS === 'true' ? [] : null,
-} }, crossOriginEmbedderPolicy: false, strictTransportSecurity: process.env.PUBLIC_HTTPS === 'true' ? undefined : false }));
+function securityHeaders(secure: boolean) {
+  return helmet({ contentSecurityPolicy: { directives: {
+    defaultSrc: ["'self'"], scriptSrc: ["'self'"], styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'], fontSrc: ["'self'", 'https://fonts.gstatic.com'], imgSrc: ["'self'", 'data:'], connectSrc: ["'self'"], objectSrc: ["'none'"], baseUri: ["'self'"], formAction: ["'self'"], upgradeInsecureRequests: secure ? [] : null,
+  } }, crossOriginEmbedderPolicy: false, strictTransportSecurity: secure ? undefined : false });
+}
+const httpHeaders = securityHeaders(false);
+const httpsHeaders = securityHeaders(true);
+app.use((request, response, next) => {
+  const secure = process.env.PUBLIC_HTTPS === 'true' && request.secure;
+  (secure ? httpsHeaders : httpHeaders)(request, response, next);
+});
 app.use(express.json({ limit: '24kb' }));
 
 app.get('/api/health', (_request, response) => response.json({ status: 'ok', quotesConfigured: Boolean(database) }));

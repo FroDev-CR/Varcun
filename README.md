@@ -32,6 +32,10 @@ Repositorio: `https://github.com/FroDev-CR/Varcun.git`, rama `main`. Crear un pr
 
 La ruta pública se define en la aplicación de Coolify. `ALLOWED_ORIGINS` debe incluir el origen exacto de la web. Activar `PUBLIC_HTTPS=true` únicamente al publicar con HTTPS. No se incluyen contraseñas ni claves en el repositorio.
 
+Con un proxy HTTPS, el servidor aplica HSTS y la actualización de recursos a HTTPS solo a solicitudes seguras, según `X-Forwarded-Proto`. El acceso HTTP de la LAN continúa funcionando.
+
+La publicación temporal usa un Cloudflare Quick Tunnel exclusivo del backend Varcun, gestionado por el servicio `varcun-public-tunnel.service`; Coolify conserva el despliegue de la aplicación. El túnel asigna la URL `trycloudflare.com`, que puede cambiar al reiniciarse. Tras un reinicio, hay que consultar su nueva URL y actualizar el origen exacto en `ALLOWED_ORIGINS` antes de usar el formulario. No requiere una cuenta ni un dominio propio. El servicio tiene reinicio automático y arranca con el servidor.
+
 ## Contenido y diseño
 
 - 13 categorías reales; las fichas enlazan a las páginas correspondientes del PDF de 81 páginas.
