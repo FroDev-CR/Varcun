@@ -18,7 +18,7 @@ pnpm start
 
 Los componentes reutilizables viven en `src/components/ui`, siguiendo la estructura de shadcn. `components.json` y el alias `@/` apuntan a esa carpeta y a `src/lib/utils`; los estilos globales están en `src/styles.css`. Esto permite integrar componentes con las rutas de importación esperadas sin mover los estilos de la landing.
 
-El hero usa `WarpGradient` con la paleta de Varcun. Su prop `paused` comparte el control de animaciones de la página; respeta movimiento reducido y suspende el shader fuera de pantalla o en pestañas inactivas. Limita la resolución del canvas y usa un degradado CSS si WebGL2 no está disponible.
+Los fondos azules comparten `BrandBackdrop`, basado en `WarpGradient` con la paleta de Varcun: hero, barra superior, Nosotros, bloque del catálogo, footer y recuadro de Tampografía. Su prop `paused` comparte el control de animaciones de la página; respeta movimiento reducido y cada shader se suspende fuera de pantalla o en pestañas inactivas. Limita la resolución del canvas y usa un degradado CSS si WebGL2 no está disponible.
 
 ## Supabase
 

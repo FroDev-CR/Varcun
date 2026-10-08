@@ -49,6 +49,8 @@
   .skip-link { position: fixed; top: -80px; left: 20px; z-index: 100; background: #fff; padding: 16px; }
   .skip-link:focus { top: 10px; }
   .topbar { @apply bg-navy text-white; }
+  .topbar, .about-section, .catalog-banner, .footer, .tech-pad { @apply relative isolate overflow-hidden; }
+  .brand-gradient-shade { @apply pointer-events-none absolute inset-0 -z-10; background: #061c32a6; }
   .topbar .site-container { @apply flex items-center justify-between; height: 32px; }
   .topbar p { font-size: 10px; letter-spacing: .035em; opacity: .85; }
   .topbar a { @apply flex items-center gap-2 text-[#b7f0ed]; font-size: 10px; }
@@ -78,7 +80,7 @@
   .selection-panel p { font-size: 11px; line-height: 1.8; color: #647381; margin-top: 13px; }
   .hero { @apply relative isolate overflow-hidden bg-navy; }
   .hero-warp { right: auto; width: calc(50% + 32px); }
-  .hero-shade { @apply pointer-events-none absolute inset-0 -z-10; background: #061c3280; }
+  .hero .brand-gradient-shade { background: #061c3280; }
   .hero-grid { @apply grid grid-cols-2; padding-block: 0; min-height: 654px; }
   .hero-content { @apply relative z-10 text-white; padding-top: 65px; padding-bottom: 60px; }
   .eyebrow { @apply flex items-center gap-2.5 text-[#aed6de]; font-size: 9px; letter-spacing: .13em; }
@@ -282,12 +284,12 @@
   .footer-top { @apply grid gap-10; grid-template-columns: 1.5fr 1fr 1fr; padding-bottom: 40px; }
   .brand-light img { background: #092a49; border: 1px solid #ffffff15; border-radius: 12px; }
   .brand-light small { color: #aac2ce; }
-  .footer-top > div:first-child > p { font-size: 11px; line-height: 1.9; color: #a0b6c3; margin-top: 20px; }
+  .footer-top > div:first-child > p { font-size: 11px; line-height: 1.9; color: #bcced7; margin-top: 20px; }
   .footer-links { @apply flex flex-col items-start gap-3; }
   .footer-links > span { font-size: 8px; letter-spacing: .14em; color: #79d2d1; margin-bottom: 6px; }
   .footer-links a,.footer-links button { @apply inline-flex items-center gap-2; font-size: 11px; color: #bacbd5; min-height: 25px; }
   .footer-links a:hover,.footer-links button:hover { color: #08bfc4; }
-  .footer-bottom { @apply flex items-center justify-between gap-3 border-t border-white/10; min-height: 65px; font-size: 8px; color: #819dab; }
+  .footer-bottom { @apply flex items-center justify-between gap-3 border-t border-white/10; min-height: 65px; font-size: 8px; color: #aec4cf; }
   .footer-bottom > span:nth-child(2) { @apply flex items-center gap-2; }
   .footer-bottom > a { @apply flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-white; }
   .category-dialog { margin: auto; padding: 28px; border: 0; border-radius: 18px; color: #092a49; width: 800px; max-width: calc(100vw - 32px); max-height: 88dvh; overflow: auto; background: white; }
