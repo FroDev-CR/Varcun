@@ -16,6 +16,10 @@ pnpm start
 
 `pnpm dev` sirve el frontend en el puerto 5173 y reenvía `/api` al servidor en 3000. Para probar el formulario inicia también `node --env-file=.env dist-server/index.js` después de construir. Sin configuración de Supabase el endpoint responde 503 y nunca simula una solicitud recibida.
 
+Los componentes reutilizables viven en `src/components/ui`, siguiendo la estructura de shadcn. `components.json` y el alias `@/` apuntan a esa carpeta y a `src/lib/utils`; los estilos globales están en `src/styles.css`. Esto permite integrar componentes con las rutas de importación esperadas sin mover los estilos de la landing.
+
+El hero usa `WarpGradient` con la paleta de Varcun. Su prop `paused` comparte el control de animaciones de la página; respeta movimiento reducido y suspende el shader fuera de pantalla o en pestañas inactivas. Limita la resolución del canvas y usa un degradado CSS si WebGL2 no está disponible.
+
 ## Supabase
 
 Aplica `supabase/migrations/20261008_varcun_quotes.sql` a la instancia elegida. La migración añade solamente `public.varcun_quote_requests` y el rol sin login `varcun_quote_writer`. RLS impide acceso público a las solicitudes. El rol de la web tiene exclusivamente INSERT; no puede leer, actualizar ni borrar solicitudes ni acceder a tablas de otras aplicaciones. Genera un JWT de ese rol en el servidor y configúralo como `SUPABASE_WRITE_KEY` en Coolify. Configura también `SUPABASE_ANON_KEY` para pasar la autenticación del gateway Kong; el JWT de escritura viaja en Authorization. No uses una clave con prefijo `VITE_`.
