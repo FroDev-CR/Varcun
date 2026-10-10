@@ -1,6 +1,6 @@
 # Varcun
 
-Landing en español con React, TypeScript, Tailwind CSS 4 y Vite. El servidor Node/Express recibe cotizaciones y las registra en Supabase autoalojado. Imágenes, categorías y fichas provienen del catálogo PDF 2026 existente. Se conserva el símbolo SVG y la paleta de la página original.
+Sitio en español con React, TypeScript, Tailwind CSS 4 y Vite. El servidor Node/Express recibe cotizaciones y las registra en Supabase autoalojado. Imágenes, categorías y fichas provienen del catálogo PDF 2026 existente. Se conserva el símbolo SVG y la paleta de la página original.
 
 ## Desarrollo
 
@@ -16,9 +16,15 @@ pnpm start
 
 `pnpm dev` sirve el frontend en el puerto 5173 y reenvía `/api` al servidor en 3000. Para probar el formulario inicia también `node --env-file=.env dist-server/index.js` después de construir. Sin configuración de Supabase el endpoint responde 503 y nunca simula una solicitud recibida.
 
-Los componentes reutilizables viven en `src/components/ui`, siguiendo la estructura de shadcn. `components.json` y el alias `@/` apuntan a esa carpeta y a `src/lib/utils`; los estilos globales están en `src/styles.css`. Esto permite integrar componentes con las rutas de importación esperadas sin mover los estilos de la landing.
+Los componentes reutilizables viven en `src/components/ui`, siguiendo la estructura de shadcn. `components.json` y el alias `@/` apuntan a esa carpeta y a `src/lib/utils`; los estilos globales están en `src/styles.css`. Esto permite integrar componentes con las rutas de importación esperadas sin mover los estilos del sitio.
 
 Los fondos azules comparten `BrandBackdrop`, basado en `WarpGradient` con la paleta de Varcun: hero, barra superior, Nosotros, bloque del catálogo, footer y recuadro de Tampografía. Su prop `paused` comparte el control de animaciones de la página; respeta movimiento reducido y cada shader se suspende fuera de pantalla o en pestañas inactivas. Limita la resolución del canvas y usa un degradado CSS si WebGL2 no está disponible.
+
+## Navegación
+
+El inicio es una presentación breve. El contenido se organiza en cinco páginas con enlaces reales: `/`, `/catalogo` (categorías, destacados y PDF), `/personalizacion` (técnicas y proceso), `/nosotros` y `/cotizar` (formulario y preguntas frecuentes). El servidor y Vite sirven el frontend al abrir o recargar una ruta directamente.
+
+La navegación usa el historial del navegador, señala la página activa y mueve el foco al encabezado de cada vista. La selección, filtros y borrador del formulario se conservan al cambiar de página dentro de la sesión; una recarga comienza una sesión nueva. Los antiguos enlaces con `#catalogo`, `#servicios`, `#nosotros`, `#contacto`, `#destacados` y `#proceso` llevan a su página correspondiente.
 
 ## Supabase
 

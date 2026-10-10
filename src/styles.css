@@ -41,8 +41,8 @@
   .text-link { @apply inline-flex items-center gap-2 font-semibold transition-colors hover:text-[#087d80]; font-size: 13px; }
   .section-kicker { @apply block font-semibold; font-size: 10px; letter-spacing: .18em; margin-bottom: 18px; }
   .section-heading { @apply flex items-end justify-between gap-10; margin-bottom: 38px; }
-  .section-heading h2, .process-heading h2, .faq-grid h2 { font-size: clamp(30px,3.15vw,43px); line-height: 1.14; letter-spacing: -.045em; font-weight: 600; }
-  .section-heading h2 span, .process-heading h2 span, .faq-grid h2 span { @apply text-[#657787]; }
+  .section-heading :is(h1,h2), .process-heading h2, .faq-grid h2 { font-size: clamp(30px,3.15vw,43px); line-height: 1.14; letter-spacing: -.045em; font-weight: 600; }
+  .section-heading :is(h1,h2) span, .process-heading h2 span, .faq-grid h2 span { @apply text-[#657787]; }
   .heading-side { max-width: 300px; }
   .heading-side p { @apply text-[#647381]; font-size: 13px; line-height: 1.8; margin-bottom: 17px; }
   .status-dot { @apply inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-aqua; }
@@ -59,8 +59,18 @@
   .brand { @apply inline-flex flex-shrink-0 items-center gap-2.5; }
   .brand strong { @apply block font-display; font-size: 23px; font-weight: 700; letter-spacing: .18em; line-height: 1; }
   .brand small { @apply block; font-size: 6.8px; letter-spacing: .125em; margin-top: 7px; }
-  .desktop-nav { @apply flex items-center gap-7; font-size: 12px; }
-  .desktop-nav a { @apply inline-flex items-center gap-1.5 transition-colors hover:text-[#087d80]; }
+  .desktop-nav { @apply flex items-center gap-5; font-size: 12px; }
+  .desktop-nav a { @apply relative inline-flex items-center gap-1.5 transition-colors hover:text-[#087d80]; min-height: 44px; }
+  .desktop-nav a[aria-current="page"] { color: #087d80; }
+  .desktop-nav a[aria-current="page"]::after { content: ''; position: absolute; inset-inline: 0; bottom: 2px; height: 2px; border-radius: 2px; background: #08bfc4; }
+  .mobile-nav a[aria-current="page"] { color: #087d80; font-weight: 600; }
+  .header-quote[aria-current="page"] { background: #087d80; }
+  .page-trail { display: flex; align-items: center; gap: 12px; padding-block: 22px; font-size: 11px; border-bottom: 1px solid #edf1f2; color: #657787; }
+  .page-trail a:hover { color: #087d80; }
+  .page-trail span { color: #092a49; font-weight: 500; }
+  main h1[tabindex="-1"]:focus { outline: none; }
+  main { min-height: calc(100dvh - 380px); }
+  main:not([data-page="inicio"]) > .section:first-of-type { padding-top: 44px; }
   .header-actions { @apply flex items-center gap-6; }
   .selection-button { @apply inline-flex items-center gap-2; font-size: 11px; }
   .selection-count { @apply inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#edf3f5]; font-size: 10px; }
@@ -203,8 +213,8 @@
   .about-image-note { @apply absolute bottom-10 left-12 z-10 flex items-center gap-3; font-size: 12px; line-height: 1.6; }
   .about-content { padding: 70px 0 70px 75px; }
   .about-content .section-kicker { @apply text-aqua; }
-  .about-content h2 { font-size: clamp(30px,3.2vw,44px); line-height: 1.15; font-weight: 500; letter-spacing: -.05em; }
-  .about-content h2 span { @apply text-aqua; }
+  .about-content :is(h1,h2) { font-size: clamp(30px,3.2vw,44px); line-height: 1.15; font-weight: 500; letter-spacing: -.05em; }
+  .about-content :is(h1,h2) span { @apply text-aqua; }
   .about-content > p { color: #bcced7; font-size: 13px; line-height: 1.95; margin-top: 23px; }
   .about-values { @apply my-7 grid gap-3; }
   .about-values > span { @apply flex items-center gap-2.5; font-size: 11px; }
@@ -244,8 +254,8 @@
   .contact-grid { @apply grid items-start gap-16; grid-template-columns: .95fr 1.05fr; }
   .contact-copy { padding-top: 20px; }
   .contact-copy .section-kicker { font-size: 9px; }
-  .contact-copy h2 { @apply relative; font-size: clamp(55px,5.6vw,74px); font-weight: 500; line-height: 1.04; letter-spacing: -.055em; width: fit-content; }
-  .contact-copy h2 span { color: #087d80; }
+  .contact-copy :is(h1,h2) { @apply relative; font-size: clamp(55px,5.6vw,74px); font-weight: 500; line-height: 1.04; letter-spacing: -.055em; width: fit-content; }
+  .contact-copy :is(h1,h2) span { color: #087d80; }
   .contact-big-arrow { @apply absolute; width: 100px; height: 100px; bottom: -6px; right: -83px; color: #08bfc4; }
   .contact-copy > p { font-size: 13px; line-height: 1.9; color: #526b77; max-width: 310px; margin-top: 28px; }
   .contact-promise { @apply mt-8 flex items-center gap-3; font-size: 11px; line-height: 1.7; }
@@ -369,7 +379,7 @@
   .own-material { flex-wrap: wrap; }
   .own-material .button { margin-left: 100px; }
   .about-content { padding: 55px 0 55px 33px; }
-  .about-content h2 { font-size: 33px; }
+  .about-content :is(h1,h2) { font-size: 33px; }
   .about-content > p { font-size: 12px; }
   .about-photo { min-height: 530px; }
   .process-step { padding-inline: 19px; }
@@ -380,7 +390,7 @@
   .catalog-banner h2 { font-size: 31px; }
   .faq-grid { gap: 45px; }
   .contact-grid { grid-template-columns: .8fr 1.2fr; gap: 30px; }
-  .contact-copy h2 { font-size: 54px; }
+  .contact-copy :is(h1,h2) { font-size: 54px; }
   .contact-big-arrow { display: none; }
   .form-grid { column-gap: 12px; }
   .footer-top { grid-template-columns: 1.4fr 1fr 1fr; gap: 25px; }
@@ -434,9 +444,11 @@
   .intro-facts strong { font-size: 30px; }
   .intro-facts small { margin-top: 5px; }
   .section { padding-block: 58px; }
+  main:not([data-page="inicio"]) > .section:first-of-type { padding-top: 32px; }
+  .page-trail { padding-block: 18px; }
   .section-heading { flex-direction: column; align-items: flex-start; gap: 21px; margin-bottom: 29px; }
   .section-kicker { font-size: 8px; margin-bottom: 14px; }
-  .section-heading h2, .process-heading h2, .faq-grid h2 { font-size: 31px; }
+  .section-heading :is(h1,h2), .process-heading h2, .faq-grid h2 { font-size: 31px; }
   .heading-side { max-width: 370px; }
   .heading-side p { font-size: 12px; margin-bottom: 10px; }
   .text-link { font-size: 12px; }
@@ -488,7 +500,7 @@
   .about-photo { margin-inline: -22px; min-height: 0; height: 310px; }
   .about-image-note { left: 25px; bottom: 26px; font-size: 11px; }
   .about-content { padding: 42px 0 48px; }
-  .about-content h2 { font-size: 34px; }
+  .about-content :is(h1,h2) { font-size: 34px; }
   .about-content > p { font-size: 12px; max-width: 410px; margin-top: 22px; }
   .process-heading { text-align: left; }
   .process-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 30px 25px; margin-top: 30px; }
@@ -513,7 +525,7 @@
   .faq-list svg { flex-shrink: 0; }
   .contact-grid { grid-template-columns: 1fr; gap: 34px; }
   .contact-copy { padding-top: 0; }
-  .contact-copy h2 { font-size: 61px; }
+  .contact-copy :is(h1,h2) { font-size: 61px; }
   .contact-big-arrow { display: block; width: 86px; height: 86px; right: -10px; }
   .contact-copy > p { max-width: 350px; margin-top: 21px; font-size: 12px; }
   .contact-promise { margin-top: 21px; }
@@ -549,7 +561,7 @@
   .hero-showcase, .about-photo { margin-inline: -18px; }
   .hero h1 { font-size: 51px; }
   .hero-buttons { gap: 16px; }
-  .contact-copy h2 { font-size: 54px; }
+  .contact-copy :is(h1,h2) { font-size: 54px; }
   .contact-big-arrow { width: 70px; right: 0; }
   .form-grid { grid-template-columns: 1fr; }
   .category-caption h3 { font-size: 14px; }

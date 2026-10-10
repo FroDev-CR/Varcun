@@ -8,7 +8,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -p tsconfig.json --noEmit && vite build && tsc -p tsconfig.server.json",
     "start": "node dist-server/index.js",
-    "test": "tsx --test server/quote.test.ts"
+    "test": "tsx --test server/quote.test.ts src/navigation.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",
