@@ -40,7 +40,11 @@ La ruta pública se define en la aplicación de Coolify. `ALLOWED_ORIGINS` debe 
 
 Con un proxy HTTPS, el servidor aplica HSTS y la actualización de recursos a HTTPS solo a solicitudes seguras, según `X-Forwarded-Proto`. El acceso HTTP de la LAN continúa funcionando.
 
-La publicación temporal usa un Cloudflare Quick Tunnel exclusivo del backend Varcun, gestionado por el servicio `varcun-public-tunnel.service`; Coolify conserva el despliegue de la aplicación. El túnel asigna la URL `trycloudflare.com`, que puede cambiar al reiniciarse. Tras un reinicio, hay que consultar su nueva URL y actualizar el origen exacto en `ALLOWED_ORIGINS` antes de usar el formulario. No requiere una cuenta ni un dominio propio. El servicio tiene reinicio automático y arranca con el servidor.
+La web pública está en [varcun.com](https://varcun.com) y [www.varcun.com](https://www.varcun.com), con DNS y certificado Universal SSL de Cloudflare. HTTP redirige a HTTPS. El dominio permanece registrado en Vercel y delega sus DNS en `brian.ns.cloudflare.com` y `paislee.ns.cloudflare.com`.
+
+El túnel permanente `varcun-web`, gestionado por `varcun-domain-tunnel.service`, conecta ambos nombres exclusivamente con `http://127.0.0.1:18085` en el servidor; Coolify conserva el despliegue de la aplicación. El servicio tiene reinicio automático y arranca con el servidor. Sus credenciales se guardan fuera del repositorio, con acceso restringido a root, y se entregan al proceso mediante credenciales de systemd. Los registros CNAME de ambos nombres apuntan al túnel con el proxy de Cloudflare activo. `ALLOWED_ORIGINS` incluye `https://varcun.com` y `https://www.varcun.com`, y `PUBLIC_HTTPS=true`.
+
+El Quick Tunnel anterior, `varcun-public-tunnel.service`, se conserva como respaldo temporal. Su URL `trycloudflare.com` puede cambiar al reiniciarse y requiere actualizar su origen en `ALLOWED_ORIGINS`; el dominio principal usa el túnel permanente.
 
 ## Contenido y diseño
 
