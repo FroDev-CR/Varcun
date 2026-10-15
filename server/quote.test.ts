@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { quoteSchema, quoteRow } from './quote.js';
+import { catalogProducts } from './catalog-data.js';
 const valid = { requestId: 'd3abc789-bd25-4d23-a161-b3551a2e7759', name: 'Proyecto de prueba', email: 'PRUEBA@example.com', category: 'botellas', quantity: 100, message: 'Una cotización de prueba para revisar la validación.', products: ['BO-2401'], consent: true };
 test('accepts a real catalog category and normalizes the persisted fields', () => {
   const row = quoteRow(quoteSchema.parse(valid));
@@ -11,4 +12,14 @@ test('rejects invalid quantities, unsupported product codes and categories', () 
 });
 test('requires consent and prevents unbounded or malformed submissions', () => {
   for (const patch of [{consent:false},{name:'x'},{email:'invalid'},{message:'short'},{message:'x'.repeat(4001)},{extra:'unexpected'},{requestId:'bad-id'}]) assert.equal(quoteSchema.safeParse({...valid,...patch}).success,false);
+});
+
+test('accepts every imported reference and selections larger than the old twelve-product limit', () => {
+  const codes = catalogProducts.map(product => product.code);
+  const allProducts = quoteSchema.parse({ ...valid, products: codes });
+  assert.equal(allProducts.products.length, 110);
+  const pens = codes.filter(code => code.startsWith('LA-'));
+  assert.equal(pens.length, 14);
+  assert.equal(quoteSchema.parse({ ...valid, category: 'lapiceros', products: pens }).products.length, 14);
+  assert.equal(quoteSchema.safeParse({ ...valid, products: [...codes, codes[0]] }).success, false);
 });

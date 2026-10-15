@@ -44,7 +44,9 @@ La publicación temporal usa un Cloudflare Quick Tunnel exclusivo del backend Va
 
 ## Contenido y diseño
 
-- 13 categorías reales; las fichas enlazan a las páginas correspondientes del PDF de 81 páginas.
+- Las 13 categorías incluyen las 110 referencias únicas del PDF, con fotografía original, código, descripción, dimensiones o capacidad y enlace a su ficha. El buscador dentro de cada categoría permite encontrar productos por nombre o código.
+- Las referencias compartidas conservan todas sus categorías y páginas del PDF, sin duplicarse en la selección. También se incluyen por tipo la bolsa de ciclista en Bolsas, el llavero multiherramienta en Focos y llaveros y los lápices de color en Oficina.
+- `server/catalog-data.ts` es el inventario compartido por la web y la validación de cotizaciones; cualquier referencia del catálogo puede añadirse a una solicitud. Los cuatro destacados del inicio del catálogo mantienen su selección original.
 - El catálogo principal es `public/catalogo-varcun-2026.pdf`, rediseñado con la identidad Varcun: 81 páginas, 126 fichas y 110 códigos únicos. La ruta anterior redirige al catálogo nuevo.
 - Las ocho imágenes principales de categorías se recrearon con fondos navy/aqua y el logo aplicado a los productos; sus archivos terminan en `-varcun.webp`. Se usan también en los diálogos y en Nosotros.
 - Selección de productos para cotización, filtros y búsqueda de categorías, diálogos accesibles, preguntas frecuentes y formulario validado.

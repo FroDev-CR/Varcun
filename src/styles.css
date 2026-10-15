@@ -156,6 +156,7 @@
   .category-caption { padding: 13px 2px 0; }
   .category-caption h3 { font-size: 17px; font-weight: 500; letter-spacing: -.035em; }
   .category-caption > span { display: block; font-size: 12px; color: #667987; line-height: 1.7; margin-top: 5px; }
+  .category-caption > .category-count { font-size: 10px; color: #087d80; font-weight: 600; margin-top: 9px; }
   .catalog-bottom { @apply mt-9 flex items-center justify-between gap-5; }
   .catalog-bottom > p { @apply flex items-center gap-2; color: #657787; font-size: 10px; }
   .catalog-bottom .button { font-size: 11px; min-height: 43px; }
@@ -174,6 +175,8 @@
   .product-info > span { font-size: 10px; color: #657787; text-transform: uppercase; letter-spacing: .1em; }
   .product-info h3 { font-size: 17px; letter-spacing: -.035em; font-weight: 500; margin-top: 5px; }
   .product-info p { font-size: 12px; color: #647381; margin-top: 7px; line-height: 1.6; }
+  .product-description { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .product-info .product-detail { color: #24475f; font-size: 11px; }
   .product-info a { @apply mt-4 inline-flex items-center gap-1.5 border-b border-navy/20 pb-1; font-size: 11px; }
   .featured-note { @apply mt-6 flex items-center justify-center gap-2 border-t border-navy/10 pt-6; font-size: 10px; color: #657787; }
   .services-section { padding-bottom: 80px; }
@@ -299,19 +302,29 @@
   .footer-bottom { @apply flex items-center justify-between gap-3 border-t border-white/10; min-height: 65px; font-size: 8px; color: #aec4cf; }
   .footer-bottom > span:nth-child(2) { @apply flex items-center gap-2; }
   .footer-bottom > a { @apply flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-white; }
-  .category-dialog { margin: auto; padding: 28px; border: 0; border-radius: 18px; color: #092a49; width: 800px; max-width: calc(100vw - 32px); max-height: 88dvh; overflow: auto; background: white; }
+  .category-dialog { margin: auto; padding: 28px; border: 0; border-radius: 18px; color: #092a49; width: 960px; max-width: calc(100vw - 32px); max-height: 88dvh; overflow: auto; background: white; overscroll-behavior: contain; }
   .category-dialog::backdrop { background: #061c32aa; backdrop-filter: blur(5px); }
-  .dialog-header { @apply flex items-center justify-between gap-4; }
+  .dialog-header { @apply flex items-center justify-between gap-4; position: sticky; top: -28px; z-index: 2; background: white; margin: -28px -28px 0; padding: 14px 28px; border-bottom: 1px solid #e3ebed; }
   .dialog-header .section-kicker { margin-bottom: 0; font-size: 9px; }
   .dialog-header button { @apply flex h-10 w-10 items-center justify-center rounded-full bg-[#f1f5f5]; }
-  .dialog-intro { @apply my-6 grid items-center gap-7; grid-template-columns: 180px 1fr; }
-  .dialog-intro > img { width: 180px; height: 148px; object-fit: cover; border-radius: 10px; }
+  .dialog-intro { @apply my-5 grid items-center gap-6; grid-template-columns: 136px 1fr; }
+  .dialog-intro > img { width: 136px; height: 110px; object-fit: cover; border-radius: 10px; }
   .dialog-intro h2 { font-size: 28px; line-height: 1.2; letter-spacing: -.04em; font-weight: 500; }
   .dialog-intro p { font-size: 12px; color: #647381; line-height: 1.8; margin-top: 9px; margin-bottom: 13px; }
-  .dialog-label { font-size: 8px; letter-spacing: .12em; margin-bottom: 13px; color: #657787; }
+  .dialog-toolbar { @apply mb-5 flex items-center justify-between gap-4; }
+  .dialog-label { font-size: 11px; color: #657787; white-space: nowrap; }
+  .dialog-search { @apply flex items-center gap-2 rounded-full border border-[#dce7e9] px-4 py-2.5; color: #657787; width: 280px; max-width: 100%; }
+  .dialog-search input { width: 100%; min-width: 0; background: transparent; border: 0; outline-offset: 4px; font-size: 12px; color: #092a49; }
+  .dialog-search > svg { flex-shrink: 0; }
+  .dialog-search button { @apply flex items-center justify-center; }
   .dialog-products { @apply grid grid-cols-3 gap-4; }
-  .dialog-products .product-picture { max-height: 200px; }
-  .dialog-no-sample { @apply rounded-lg bg-cream p-5; color: #647381; font-size: 13px; line-height: 1.8; }
+  .dialog-products .product-picture { aspect-ratio: 1.2; }
+  .dialog-products .product-picture img { padding: 32px; }
+  .dialog-products .product-card { display: flex; flex-direction: column; }
+  .dialog-products .product-info { display: flex; flex: 1; flex-direction: column; align-items: flex-start; }
+  .dialog-products .product-info a { margin-top: auto; padding-top: 15px; }
+  .dialog-empty { @apply rounded-lg bg-cream px-5 py-10 text-center; color: #647381; font-size: 13px; line-height: 1.8; }
+  .dialog-empty .text-link { margin-top: 12px; }
   .dialog-bottom { @apply mt-5 flex items-center justify-between gap-5 border-t border-[#e3ebed] pt-5; }
   .dialog-bottom > span { font-size: 9px; color: #657787; }
   .dialog-bottom .button { font-size: 11px; }
@@ -548,12 +561,17 @@
   .footer-bottom > span:first-child { width: calc(100% - 55px); }
   .footer-bottom > span:nth-child(2) { order: 3; width: 100%; }
   .category-dialog { padding: 20px; max-width: calc(100vw - 22px); }
+  .dialog-header { top: -20px; margin: -20px -20px 0; padding: 12px 20px; }
   .dialog-intro { grid-template-columns: 95px 1fr; gap: 16px; }
-  .dialog-intro > img { width: 95px; height: 128px; }
+  .dialog-intro > img { width: 95px; height: 96px; }
   .dialog-intro h2 { font-size: 22px; }
   .dialog-intro p { font-size: 10px; }
   .dialog-intro .text-link { font-size: 10px; }
   .dialog-products { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 13px; }
+  .dialog-products .product-picture img { padding: 26px; }
+  .dialog-products .product-code { left: 10px; top: 11px; font-size: 8px; }
+  .dialog-toolbar { align-items: stretch; flex-direction: column; gap: 12px; }
+  .dialog-search { width: 100%; }
   .dialog-bottom { flex-direction: column; align-items: flex-start; gap: 13px; }
 }
 @media (max-width: 370px) {

@@ -1,3 +1,5 @@
+import { catalogProducts, type CatalogProduct } from '../server/catalog-data';
+
 export type Category = { id: string; name: string; short: string; description: string; page: number; range: string; image: string; group: string };
 export const categories: Category[] = [
   { id: 'botellas', name: 'Botellas', short: 'Botellas', description: 'Plásticas, de aluminio y térmicas para acompañar cada día.', page: 20, range: '20–27', image: 'botellas-varcun', group: 'Para el día a día' },
@@ -14,20 +16,16 @@ export const categories: Category[] = [
   { id: 'sublimacion', name: 'Sublimación', short: 'Sublimación', description: 'Botellas y gorras del catálogo para sublimar.', page: 68, range: '68–70', image: 'sublimacion', group: 'Para el día a día' },
   { id: 'otros', name: 'Otros', short: 'Más ideas', description: 'Sets de BBQ, vino y toallas de enfriamiento.', page: 79, range: '79–81', image: 'otros', group: 'Detalles útiles' },
 ];
-export type Product = { code: string; name: string; category: string; detail: string; technique: string; page: number; image: string; label?: string };
-export const products: Product[] = [
-  { code: 'BO-2401', name: 'Botella térmica', category: 'botellas', detail: '800 ml · Tapa de seguridad', technique: 'Serigrafía / Grabado láser', page: 27, image: 'botella-termica', label: 'Para todos los días' },
-  { code: 'AO-2601', name: 'Libreta Nature', category: 'oficina', detail: '9 × 14 cm · Libreta ecológica', technique: 'Serigrafía / Sticker', page: 4, image: 'libreta-nature', label: 'Una nueva idea' },
-  { code: 'GO-1011', name: 'Gorra LuxFit', category: 'gorras', detail: 'Material deportivo · Cierre metálico', technique: 'Bordado', page: 43, image: 'gorra-luxfit', label: 'Lleva tu marca' },
-  { code: 'VA-2501', name: 'Vaso térmico', category: 'vasos', detail: '30 oz · Acero inoxidable', technique: 'Serigrafía / Grabado láser', page: 29, image: 'vaso-termico' },
-  { code: 'BP-2602', name: 'Bolsa de manta', category: 'bolsas', detail: '42 × 38 cm · Agarraderas largas', technique: 'Serigrafía', page: 75, image: 'bolsa-manta' },
-  { code: 'LO-2301', name: 'Lonchera / hielera', category: 'maletines', detail: '31 × 26,5 × 19 cm · Insulación térmica', technique: 'Serigrafía', page: 50, image: 'lonchera' },
-  { code: 'LA-2401', name: 'Lapicero de bambú', category: 'lapiceros', detail: '13,8 cm · Mecanismo pulsador', technique: 'Tampografía / Grabado láser', page: 14, image: 'lapicero-bambu' },
-  { code: 'MU-1901', name: 'Set de herramientas', category: 'herramientas', detail: 'Estuche metálico con zipper', technique: 'Encapsulado', page: 66, image: 'herramientas' },
-  { code: 'BO-2405', name: 'Botella para sublimar', category: 'sublimacion', detail: '800 ml · Aluminio blanco', technique: 'Serigrafía / Sublimación', page: 69, image: 'sublimacion' },
-  { code: 'AO-2402', name: 'Libreta Coffee', category: 'eco', detail: '21 × 14 cm · Hojas rayadas', technique: 'Serigrafía / Sticker', page: 5, image: 'libreta-coffee' },
-  { code: 'OT-2605', name: 'Set de BBQ', category: 'otros', detail: '4 piezas · Mangos de madera', technique: 'Grabado láser / Serigrafía', page: 80, image: 'bbq' },
-  { code: 'OT-2601', name: 'Set de vino', category: 'otros', detail: '4 piezas · Estuche de madera', technique: 'Grabado láser / Serigrafía', page: 80, image: 'vino' },
-];
+export type Product = CatalogProduct;
+export const products: Product[] = catalogProducts;
+const featuredCodes = ['BO-2401', 'AO-2601', 'GO-1011', 'VA-2501'];
+export const featuredProducts = featuredCodes.map(code => products.find(product => product.code === code)!);
+export const productsInCategory = (id: string) => products.filter(product => product.categories.includes(id));
+export const productImageHref = (product: Product) => `/images/${product.image}.webp`;
+export const normalizeCatalogSearch = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('es').trim();
+export function searchProducts(categoryId: string, search: string) {
+  const query = normalizeCatalogSearch(search);
+  return productsInCategory(categoryId).filter(product => normalizeCatalogSearch(`${product.code} ${product.name} ${product.description}`).includes(query));
+}
 export const CATALOG_PDF_HREF = '/catalogo-varcun-2026.pdf';
 export const catalogHref = (page = 1) => `${CATALOG_PDF_HREF}#page=${page}`;

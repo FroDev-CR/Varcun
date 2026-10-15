@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import { catalogProducts } from './catalog-data.js';
 
 const categoryIds = ['botellas', 'vasos', 'oficina', 'bolsas', 'gorras', 'maletines', 'electronicos', 'eco', 'lapiceros', 'llaveros', 'herramientas', 'sublimacion', 'otros', 'material-cliente', 'otro-proyecto'] as const;
-const productCodes = ['BO-2401', 'AO-2601', 'GO-1011', 'VA-2501', 'BP-2602', 'LO-2301', 'LA-2401', 'MU-1901', 'BO-2405', 'AO-2402', 'OT-2605', 'OT-2601'] as const;
+const productCodes = catalogProducts.map(product => product.code);
 const safeText = (max: number) => z.string().trim().max(max).refine(value => !/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(value));
 
 export const quoteSchema = z.object({
@@ -13,7 +14,7 @@ export const quoteSchema = z.object({
   category: z.enum(categoryIds),
   quantity: z.number().int().min(1).max(1_000_000),
   message: safeText(4000).pipe(z.string().min(10)),
-  products: z.array(z.enum(productCodes)).max(12).refine(values => new Set(values).size === values.length).default([]),
+  products: z.array(z.enum(productCodes)).max(productCodes.length).refine(values => new Set(values).size === values.length).default([]),
   consent: z.literal(true),
   website: z.string().max(200).default(''),
 }).strict();
