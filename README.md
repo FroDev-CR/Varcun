@@ -24,6 +24,10 @@ Los fondos azules comparten `BrandBackdrop`, basado en `WarpGradient` con la pal
 
 El inicio es una presentación breve. El contenido se organiza en cinco páginas con enlaces reales: `/`, `/catalogo` (categorías, destacados y PDF), `/personalizacion` (técnicas y proceso), `/nosotros` y `/cotizar` (formulario y preguntas frecuentes). El servidor y Vite sirven el frontend al abrir o recargar una ruta directamente.
 
+Las 110 referencias tienen también su ficha en `/productos/codigo`, por ejemplo `/productos/bo-2401`. La foto y el nombre de cada tarjeta abren su ficha, con descripción, medidas, personalización, enlace al PDF y botones para cotizar o copiar su enlace. Al cotizar desde una ficha, el producto queda seleccionado y se completa su categoría.
+
+El servidor incluye los metadatos Open Graph y Twitter en la respuesta HTML, sin depender de JavaScript: los enlaces generales muestran el logo y los individuales muestran la foto, el nombre y el código del producto. Las miniaturas JPEG de 800 × 800 están en `public/images/compartir`; se regeneran con `python tools/generate_social_images.py` (Pillow y fuentes Segoe UI, o las rutas `--font` y `--bold-font`). La URL canónica usa `https://varcun.com`. Las referencias inexistentes devuelven 404 y `noindex`. La actualización de vistas previas ya almacenadas depende de la caché de cada aplicación.
+
 La navegación usa el historial del navegador, señala la página activa y mueve el foco al encabezado de cada vista. La selección, filtros y borrador del formulario se conservan al cambiar de página dentro de la sesión; una recarga comienza una sesión nueva. Los antiguos enlaces con `#catalogo`, `#servicios`, `#nosotros`, `#contacto`, `#destacados` y `#proceso` llevan a su página correspondiente.
 
 ## Supabase

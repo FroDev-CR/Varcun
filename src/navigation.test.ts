@@ -27,3 +27,11 @@ test('the accessibility skip link stays on the current page', () => {
   assert.deepEqual(resolveSiteLocation('/nosotros', '#contenido'), { page: 'nosotros', href: '/nosotros#contenido', hash: '#contenido' });
   assert.equal(resolveSiteLocation('/', '#contenido').page, 'inicio');
 });
+
+test('product links survive direct loads, related-product navigation and history', () => {
+  assert.deepEqual(resolveSiteLocation('/productos/bo-2401'), { page: 'catalogo', href: '/productos/bo-2401', hash: '', productCode: 'BO-2401', productRoute: true });
+  assert.equal(resolveSiteLocation('/productos/AO-2601/').href, '/productos/ao-2601');
+  assert.equal(resolveSiteLocation('/productos/la-2401', '#contenido').href, '/productos/la-2401#contenido');
+  assert.equal(resolveSiteLocation('/productos/no-existe').productRoute, true);
+  assert.equal(resolveSiteLocation('/catalogo').productCode, undefined);
+});

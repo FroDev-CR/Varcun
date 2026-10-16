@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
-import { ArrowDownToLine, ArrowRight, ArrowUpRight, ArrowUpRight as CircleArrowUpRight, Check, CheckCircle2, Layers3, Leaf, Menu, Minus, Palette, Plus, Search, ShieldCheck, Sparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, ArrowUpRight, ArrowUpRight as CircleArrowUpRight, Check, CheckCircle2, Copy, Layers3, Leaf, Menu, Minus, Palette, Plus, Search, ShieldCheck, Sparkles, X } from 'lucide-react';
 import { categories, products, featuredProducts, productsInCategory, searchProducts, productImageHref, catalogHref, CATALOG_PDF_HREF, type Category, type Product } from './catalog';
 import { createRequestId } from './request-id';
 import { BrandBackdrop } from '@/components/ui/brand-backdrop';
 import { sitePages, useSiteNavigation } from './navigation';
 import { SiteLink, SiteNavigationContext } from './components/site-link';
+import { productHref, SITE_ORIGIN } from '../server/site-metadata';
+import { updatePageMetadata } from './page-metadata';
 
 function Brand({ light = false }: { light?: boolean }) {
   return <SiteLink href="/" className={`brand ${light ? 'brand-light' : ''}`} aria-label="Varcun, inicio"><img src="/logo-mark.svg" width="44" height="44" alt="" /><span><strong>VARCUN</strong><small>TU IDEA, NUESTRA IMPRESIÓN</small></span></SiteLink>;
@@ -43,6 +45,8 @@ function App() {
   const [search, setSearch] = useState('');
   const [motionPaused, setMotionPaused] = useState(false);
   const [announce, setAnnounce] = useState('');
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'error'>('idle');
+  const activeProduct = products.find(product => product.code === location.productCode);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const focusQuote = useRef(false);
@@ -53,7 +57,8 @@ function App() {
     setShowSelection(false);
     dialogRef.current?.close();
     setCategory(null);
-    document.title = sitePages.find(page => page.id === location.page)!.title;
+    setShareStatus('idle');
+    updatePageMetadata(location.href);
     const frame = requestAnimationFrame(() => {
       const anchor = location.hash ? document.getElementById(location.hash.slice(1)) : null;
       if (anchor) anchor.scrollIntoView({ behavior: 'instant', block: 'start' });
@@ -112,6 +117,15 @@ function App() {
     navigate('/cotizar');
   }
 
+  async function copyProductLink(product: Product) {
+    try {
+      await navigator.clipboard.writeText(`${SITE_ORIGIN}${productHref(product.code)}`);
+      setShareStatus('copied');
+    } catch {
+      setShareStatus('error');
+    }
+  }
+
   function saveQuoteDraft(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const field = event.target as HTMLInputElement;
     if (field.name in quoteDraft) {
@@ -150,8 +164,8 @@ function App() {
   function productCard(product: Product, categoryId = product.category) {
     const selected = selection.includes(product.code);
     return <article className="product-card" key={product.code}>
-      <div className="product-picture"><span className="product-code">{product.code}</span><img src={productImageHref(product)} alt={`${product.name}, ${product.code}`} width="400" height="400" loading="lazy" /><button className={`product-add ${selected ? 'selected' : ''}`} onClick={() => toggleProduct(product)} aria-label={`${selected ? 'Quitar' : 'Agregar'} ${product.name}, ${product.code}, ${selected ? 'de' : 'a'} mi selección`} aria-pressed={selected}>{selected ? <Check size={18} /> : <Plus size={18} />}</button></div>
-      <div className="product-info"><span>{categories.find(item => item.id === categoryId)?.short}</span><h3>{product.name}</h3><p className="product-description">{product.description}</p>{product.detail && <p className="product-detail">{product.detail}</p>}<a href={catalogHref(product.pages[categoryId] ?? product.page)} target="_blank" rel="noopener noreferrer">Ver ficha en el catálogo <ArrowUpRight size={14} /></a></div>
+      <div className="product-picture"><span className="product-code">{product.code}</span><SiteLink href={productHref(product.code)} className="product-image-link" aria-label={`Ver ${product.name}, ${product.code}`}><img src={productImageHref(product)} alt={`${product.name}, ${product.code}`} width="400" height="400" loading="lazy" /></SiteLink><button className={`product-add ${selected ? 'selected' : ''}`} onClick={() => toggleProduct(product)} aria-label={`${selected ? 'Quitar' : 'Agregar'} ${product.name}, ${product.code}, ${selected ? 'de' : 'a'} mi selección`} aria-pressed={selected}>{selected ? <Check size={18} /> : <Plus size={18} />}</button></div>
+      <div className="product-info"><span>{categories.find(item => item.id === categoryId)?.short}</span><h3><SiteLink href={productHref(product.code)}>{product.name}</SiteLink></h3><p className="product-description">{product.description}</p>{product.detail && <p className="product-detail">{product.detail}</p>}<a href={catalogHref(product.pages[categoryId] ?? product.page)} target="_blank" rel="noopener noreferrer">Ver ficha en el catálogo <ArrowUpRight size={14} /></a></div>
     </article>;
   }
 
@@ -175,7 +189,18 @@ function App() {
     </header>
 
     <main id="contenido" tabIndex={-1} data-page={location.page}>
-      {location.page !== 'inicio' && <nav className="site-container page-trail" aria-label="Ubicación actual"><SiteLink href="/">Inicio</SiteLink><ArrowRight size={12} aria-hidden="true" /><span aria-current="page">{sitePages.find(page => page.id === location.page)!.label}</span></nav>}
+      {location.page !== 'inicio' && <nav className="site-container page-trail" aria-label="Ubicación actual"><SiteLink href="/">Inicio</SiteLink><ArrowRight size={12} aria-hidden="true" />{location.productRoute && <><SiteLink href="/catalogo">Catálogo</SiteLink><ArrowRight size={12} aria-hidden="true" /></>}<span aria-current="page">{location.productRoute ? activeProduct?.name ?? 'Producto no encontrado' : sitePages.find(page => page.id === location.page)!.label}</span></nav>}
+      {location.productRoute && (activeProduct ? <>
+        <section className="section product-page"><div className="site-container product-detail-grid">
+          <div className="product-detail-visual"><span className="product-reference">{activeProduct.code}</span><img src={productImageHref(activeProduct)} alt={`${activeProduct.name}, ${activeProduct.code}`} width="600" height="600" fetchPriority="high" /></div>
+          <div className="product-detail-copy"><span className="section-kicker">{categories.find(item => item.id === activeProduct.category)?.short} · CATÁLOGO 2026</span><h1 tabIndex={-1}>{activeProduct.name}</h1><p className="product-full-description">{activeProduct.description}</p><dl>{activeProduct.detail && <div><dt>Medidas o capacidad</dt><dd>{activeProduct.detail}</dd></div>}{activeProduct.technique && <div><dt>Personalización</dt><dd>{activeProduct.technique}</dd></div>}<div><dt>Referencia</dt><dd>{activeProduct.code}</dd></div></dl>
+            <div className="product-detail-actions"><button className="button button-aqua" onClick={() => { setSelection(current => current.includes(activeProduct.code) ? current : [...current, activeProduct.code]); quoteCategory(activeProduct.category); }}>Cotizar este producto <ArrowUpRight size={18} /></button><button className="button button-outline" onClick={() => copyProductLink(activeProduct)}>{shareStatus === 'copied' ? <Check size={16} /> : <Copy size={16} />}{shareStatus === 'copied' ? 'Enlace copiado' : 'Copiar enlace'}</button></div>
+            <p className="product-share-status" role="status" aria-live="polite">{shareStatus === 'copied' ? 'Listo para compartir este producto.' : shareStatus === 'error' ? 'Selecciona el enlace de abajo para copiarlo.' : ''}</p>{shareStatus === 'error' && <input className="product-share-url" aria-label="Enlace de este producto" readOnly value={`${SITE_ORIGIN}${productHref(activeProduct.code)}`} onFocus={event => event.currentTarget.select()} />}
+            <a className="text-link" href={catalogHref(activeProduct.page)} target="_blank" rel="noopener noreferrer">Ver ficha en el catálogo PDF <ArrowUpRight size={16} /></a><p className="product-availability"><ShieldCheck size={17} />Colores, disponibilidad, cantidades y personalización se confirman al cotizar.</p>
+          </div>
+        </div></section>
+        <section className="section featured-section"><div className="site-container"><div className="section-heading"><div><span className="section-kicker">SIGUE EXPLORANDO</span><h2>Más ideas para tu marca.</h2></div><SiteLink href="/catalogo" className="text-link">Ver todo el catálogo <ArrowRight size={16} /></SiteLink></div><div className="product-grid">{productsInCategory(activeProduct.category).filter(product => product.code !== activeProduct.code).slice(0, 4).map(product => productCard(product))}</div></div></section>
+      </> : <section className="section"><div className="site-container product-not-found"><span className="section-kicker">CATÁLOGO VARCUN</span><h1 tabIndex={-1}>No encontramos este producto.</h1><p>Explora el catálogo para encontrar la referencia que buscas.</p><SiteLink href="/catalogo" className="button button-dark">Explorar productos <ArrowRight size={18} /></SiteLink></div></section>)}
       {location.page === 'inicio' && <>
       <section id="inicio" className="hero">
         <BrandBackdrop className="hero-warp" paused={motionPaused} />
@@ -188,7 +213,7 @@ function App() {
       <section className="intro-strip"><div className="site-container intro-grid"><div><span className="section-kicker">MUCHO MÁS QUE UN LOGO</span><h2>Una buena idea merece<br />una gran impresión.</h2></div><p>Elige el artículo. Imagina el diseño. Nosotros te ayudamos a darle forma, con productos y técnicas de personalización para tu empresa, evento o proyecto.</p><div className="intro-facts"><div><strong>13<span> categorías</span></strong><small>Un mundo de posibilidades</small></div><div><strong>2026</strong><small>Tu próximo proyecto empieza aquí</small></div></div></div></section>
       </>}
 
-      {location.page === 'catalogo' && <>
+      {location.page === 'catalogo' && !location.productRoute && <>
       <section id="catalogo" className="section catalog-section"><div className="site-container"><div className="section-heading" data-reveal><div><span className="section-kicker">ENCUENTRA TU PRÓXIMA IDEA</span><h1 tabIndex={-1}>Un producto para<br /><span>cada forma de conectar.</span></h1></div><div className="heading-side"><p>Explora nuestra oferta y encuentra ese detalle que hará hablar de tu marca.</p><a className="text-link" href={catalogHref()} target="_blank" rel="noopener noreferrer">Ver catálogo completo <ArrowUpRight size={17} /></a></div></div>
         <div className="catalog-toolbar"><div className="filter-buttons" role="group" aria-label="Filtrar categorías">{['Todas', 'Para el día a día', 'En la oficina', 'Para llevar', 'Detalles útiles'].map(value => <button key={value} aria-pressed={group === value} className={group === value ? 'active' : ''} onClick={() => setGroup(value)}>{value}</button>)}</div><label className="catalog-search"><Search size={17} /><input value={search} onChange={event => setSearch(event.target.value)} placeholder="Buscar categoría" aria-label="Buscar categoría" /></label></div>
         <div className="category-grid">{visibleCategories.map(item => <button key={item.id} className="category-card group" onClick={() => { setCategorySearch(''); setCategory(item); }} aria-label={`Explorar ${item.name}`}><div className="category-photo"><img src={`/images/${item.image}.webp`} alt="" width="550" height="420" loading="lazy" /><span className="category-index">{String(categories.indexOf(item) + 1).padStart(2, '0')}</span><span className="category-arrow"><ArrowUpRight size={22} /></span>{item.id === 'eco' && <span className="eco-tag"><Leaf size={13} /> ECO FRIENDLY</span>}</div><div className="category-caption"><h3>{item.short}</h3><span>{item.description}</span><span className="category-count">{productsInCategory(item.id).length} referencias</span></div></button>)}</div>

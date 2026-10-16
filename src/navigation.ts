@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { productHref } from '../server/site-metadata';
 
 export const sitePages = [
   { id: 'inicio', href: '/', label: 'Inicio', title: 'Varcun · Tu idea, nuestra impresión' },
@@ -9,7 +10,7 @@ export const sitePages = [
 ] as const;
 
 export type SitePage = typeof sitePages[number]['id'];
-export type SiteLocation = { page: SitePage; href: string; hash: string };
+export type SiteLocation = { page: SitePage; href: string; hash: string; productCode?: string; productRoute?: boolean };
 
 const legacySections: Record<string, { page: SitePage; hash?: string }> = {
   '#inicio': { page: 'inicio' },
@@ -23,6 +24,10 @@ const legacySections: Record<string, { page: SitePage; hash?: string }> = {
 
 export function resolveSiteLocation(pathname: string, hash = ''): SiteLocation {
   const path = pathname.replace(/\/+$/, '') || '/';
+  if (path.startsWith('/productos/')) {
+    const code = /^\/productos\/([a-z0-9-]+)$/i.exec(path)?.[1].toUpperCase();
+    return { page: 'catalogo', href: `${code ? productHref(code) : path}${hash}`, hash, productCode: code, productRoute: true };
+  }
   const legacy = path === '/' ? legacySections[hash] : undefined;
   const page = sitePages.find(item => legacy ? item.id === legacy.page : item.href === path) ?? sitePages[0];
   const anchor = legacy ? legacy.hash ?? '' : hash;

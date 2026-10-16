@@ -3,7 +3,9 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { createClient } from '@supabase/supabase-js';
 import { resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
 import { quoteRow, quoteSchema } from './quote.js';
+import { pageMetadata, productFromPath, productHref, renderPageHtml } from './site-metadata.js';
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -48,8 +50,14 @@ app.post('/api/quotes', async (request, response) => {
 });
 app.use('/api', (_request, response) => response.status(404).json({ message: 'Ruta no disponible.' }));
 app.get('/catalogo-2026.pdf', (_request, response) => response.redirect(302, '/catalogo-varcun-2026.pdf'));
-app.use(express.static(resolve('dist'), { maxAge: '1h', setHeaders(response, path) { if (path.includes('assets')) response.setHeader('Cache-Control', 'public, max-age=31536000, immutable'); } }));
-app.get('/{*path}', (_request, response) => response.sendFile(resolve('dist/index.html')));
+const pageTemplate = readFileSync(resolve('dist/index.html'), 'utf8');
+app.use(express.static(resolve('dist'), { index: false, maxAge: '1h', setHeaders(response, path) { if (path.includes('assets')) response.setHeader('Cache-Control', 'public, max-age=31536000, immutable'); } }));
+app.get('/{*path}', (request, response) => {
+  const product = productFromPath(request.path);
+  if (product && request.path !== productHref(product.code)) { response.redirect(308, productHref(product.code)); return; }
+  const metadata = pageMetadata(request.path);
+  response.status(metadata.notFound ? 404 : 200).type('html').set('Cache-Control', 'no-cache').send(renderPageHtml(pageTemplate, request.path));
+});
 app.use((error: Error, _request: express.Request, response: express.Response, _next: express.NextFunction) => {
   const malformed = error instanceof SyntaxError;
   response.status(malformed ? 400 : 500).json({ message: malformed ? 'El formato de la solicitud no es válido.' : 'No pudimos completar la solicitud.' });
