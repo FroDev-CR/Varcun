@@ -8,6 +8,7 @@ import { SiteLink, SiteNavigationContext } from './components/site-link';
 import { productHref, SITE_ORIGIN } from '../server/site-metadata';
 import { updatePageMetadata } from './page-metadata';
 import { useSiteContent } from './use-site-content';
+import { WhatsAppButton } from './components/whatsapp-button';
 
 function Brand({ light = false }: { light?: boolean }) {
   return <SiteLink href="/" className={`brand ${light ? 'brand-light' : ''}`} aria-label="Varcun, inicio"><img src="/logo-mark.svg" width="44" height="44" alt="" /><span><strong>VARCUN</strong><small>TU IDEA, NUESTRA IMPRESIÓN</small></span></SiteLink>;
@@ -255,6 +256,7 @@ function App() {
 
     <footer className="footer"><BrandBackdrop paused={motionPaused} /><div className="site-container"><div className="footer-top"><div><Brand light /><p className="editable-lines">{content.footer}</p></div><div className="footer-links"><span>EXPLORA</span><SiteLink href="/catalogo">Nuestros productos</SiteLink><SiteLink href="/personalizacion">Personalización</SiteLink><SiteLink href="/nosotros">Sobre Varcun</SiteLink></div><div className="footer-links"><span>EMPIEZA ALGO</span><SiteLink href="/cotizar#contacto">Solicita una cotización <ArrowUpRight size={14} /></SiteLink><a href={catalogHref()} target="_blank" rel="noopener noreferrer">Catálogo 2026 <ArrowUpRight size={14} /></a><button aria-pressed={motionPaused} onClick={() => setMotionPaused(!motionPaused)}>{motionPaused ? 'Reanudar animaciones' : 'Pausar animaciones'}</button></div></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Varcun. Todos los derechos reservados.</span><span>Tu idea, nuestra impresión.</span><SiteLink href="/" aria-label="Volver al inicio"><ArrowUpRight size={18} /></SiteLink></div></div></footer>
 
+    <WhatsAppButton />
     <div className="sr-only" role="status" aria-live="polite">{announce}</div>
     <dialog ref={dialogRef} className="category-dialog" onCancel={closeDialog} onClose={() => { setCategory(null); document.body.style.overflow = ''; }} onClick={event => { if (event.target === event.currentTarget) closeDialog(); }} aria-labelledby="category-dialog-title">
       {category && <>

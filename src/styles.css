@@ -40,6 +40,12 @@
   .button-aqua { @apply bg-aqua text-navy hover:bg-[#65ddd7]; }
   .button-outline { @apply border border-navy/20 bg-transparent hover:border-navy hover:bg-navy/5; }
   .text-link { @apply inline-flex items-center gap-2 font-semibold transition-colors hover:text-[#087d80]; font-size: 13px; }
+  .whatsapp-float { position: fixed; right: calc(24px + env(safe-area-inset-right, 0px)); bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 45; display: flex; align-items: center; justify-content: center; width: 58px; height: 58px; border-radius: 50%; background: #128c4a; color: white; box-shadow: 0 4px 16px #092a4929; transition: background-color .2s, transform .2s; }
+  .whatsapp-float:hover { background: #0c713a; transform: translateY(-2px); }
+  .whatsapp-float:focus-visible { outline: 3px solid #092a49; outline-offset: 4px; }
+  .whatsapp-float svg { flex-shrink: 0; }
+  .whatsapp-tooltip { position: absolute; right: calc(100% + 12px); padding: 9px 13px; border-radius: 6px; background: #092a49; color: white; white-space: nowrap; font-size: 12px; font-weight: 500; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s; }
+  .whatsapp-float:is(:hover, :focus-visible) .whatsapp-tooltip { opacity: 1; visibility: visible; }
   .section-kicker { @apply block font-semibold; font-size: 10px; letter-spacing: .18em; margin-bottom: 18px; }
   .section-heading { @apply flex items-end justify-between gap-10; margin-bottom: 38px; }
   .section-heading :is(h1,h2), .process-heading h2, .faq-grid h2 { font-size: clamp(30px,3.15vw,43px); line-height: 1.14; letter-spacing: -.045em; font-weight: 600; }
@@ -318,7 +324,7 @@
   .footer-links > span { font-size: 8px; letter-spacing: .14em; color: #79d2d1; margin-bottom: 6px; }
   .footer-links a,.footer-links button { @apply inline-flex items-center gap-2; font-size: 11px; color: #bacbd5; min-height: 25px; }
   .footer-links a:hover,.footer-links button:hover { color: #08bfc4; }
-  .footer-bottom { @apply flex items-center justify-between gap-3 border-t border-white/10; min-height: 65px; font-size: 8px; color: #aec4cf; }
+  .footer-bottom { @apply flex items-center justify-between gap-3 border-t border-white/10; min-height: 65px; padding-right: 76px; font-size: 8px; color: #aec4cf; }
   .footer-bottom > span:nth-child(2) { @apply flex items-center gap-2; }
   .footer-bottom > a { @apply flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-white; }
   .category-dialog { margin: auto; padding: 28px; border: 0; border-radius: 18px; color: #092a49; width: 960px; max-width: calc(100vw - 32px); max-height: 88dvh; overflow: auto; background: white; overscroll-behavior: contain; }
@@ -428,6 +434,8 @@
   .footer-top { grid-template-columns: 1.4fr 1fr 1fr; gap: 25px; }
 }
 @media (max-width: 640px) {
+  .whatsapp-float { right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 54px; height: 54px; }
+  .whatsapp-tooltip { display: none; }
   html { scroll-padding-top: 90px; }
   .site-container { padding-inline: 22px; }
   .topbar .site-container { height: 29px; }
