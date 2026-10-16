@@ -50,6 +50,18 @@ El túnel permanente `varcun-web`, gestionado por `varcun-domain-tunnel.service`
 
 El Quick Tunnel anterior, `varcun-public-tunnel.service`, se conserva como respaldo temporal. Su URL `trycloudflare.com` puede cambiar al reiniciarse y requiere actualizar su origen en `ALLOWED_ORIGINS`; el dominio principal usa el túnel permanente.
 
+## Administración
+
+El panel privado está en `/admin`. Incluye buzón con búsqueda, filtros, paginación, productos y contacto de cada cotización, estados (nueva, en revisión, respondida y cerrada) y notas internas. Cambiar el estado registra seguimiento; no envía correos ni mensajes al cliente. El editor permite publicar 26 textos de las páginas y del enlace general, previsualizar el encabezado del inicio y cargar versiones anteriores como borrador. Los cambios se guardan en Supabase y sobreviven a los despliegues.
+
+Aplica `supabase/migrations/20261016_varcun_admin.sql` y configura `SUPABASE_ADMIN_KEY` únicamente como variable runtime del servidor. Debe ser un JWT del rol restringido `varcun_admin_backend`, nunca `service_role`. Ese rol solo lee las cotizaciones y actualiza sus columnas de seguimiento; las cuentas, sesiones e historial de contenido son privados. El visitante solo puede leer los textos ya publicados. La clave pública y el rol que recibe cotizaciones siguen sin poder leerlas.
+
+El primer acceso y la recuperación se habilitan desde el servidor con un token aleatorio de 32 bytes: se guarda solamente su SHA-256, un vencimiento corto y, cuando se conoce, el correo esperado en `varcun_admin_bootstrap`. Para el primer acceso se usa `purpose=setup`; para recuperar una cuenta existente, `purpose=reset` con su correo exacto. El enlace privado usa `/admin#activar=TOKEN`; el token se elimina de la URL al abrirlo y se consume dentro de una transacción al elegir la contraseña. No hay registro público ni recuperación abierta. No guardes ni publiques tokens de activación en Git.
+
+Las contraseñas se guardan con scrypt y sal aleatoria. Las sesiones duran ocho horas, se almacenan como hashes y usan cookies HttpOnly, SameSite Strict y Secure bajo HTTPS. Los cambios verifican el origen, la sesión y las versiones actuales; cambiar la contraseña invalida las otras sesiones. Las rutas administrativas usan `no-store`, `noindex` y `no-referrer`.
+
+`pnpm test` verifica acceso no autorizado, activación de un solo uso, sesiones, CSRF, límites de edición y versiones. `pnpm exec tsx tools/preview_admin.ts` abre una demostración desechable en `http://127.0.0.1:3017/admin`, con datos ficticios y sin conexión a Supabase. La demostración se autentica automáticamente solo en localhost; ese servidor y sus fixtures no se incluyen en la imagen de producción.
+
 ## Contenido y diseño
 
 - Las 13 categorías incluyen las 110 referencias únicas del PDF, con fotografía original, código, descripción, dimensiones o capacidad y enlace a su ficha. El buscador dentro de cada categoría permite encontrar productos por nombre o código.

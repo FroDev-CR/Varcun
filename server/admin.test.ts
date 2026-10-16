@@ -1,0 +1,91 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import express from 'express';
+import { once } from 'node:events';
+import { createAdminRouter } from './admin.js';
+import { adminFixture } from '../tools/admin-fixture.js';
+import { defaultContent, contentSchema, resolveContent } from './content.js';
+import { digest, hashPassword, newSession, verifyPassword } from './admin-auth.js';
+import { renderPageHtml } from './site-metadata.js';
+
+test('admin authorization protects customer data, activation, mutations and session revocation', async t => {
+  const fixture = await adminFixture();
+  let published = 0;
+  const app = express(); app.use(express.json());
+  app.use('/api/admin', createAdminRouter({ store: fixture.store, secure: false, origins: ['https://varcun.com'], onPublish: () => published++ }));
+  const server = app.listen(0, '127.0.0.1'); await once(server, 'listening');
+  t.after(() => { server.closeAllConnections(); server.close(); });
+  const address = server.address(); assert.ok(address && typeof address !== 'string');
+  const base = `http://127.0.0.1:${address.port}/api/admin`;
+  let cookie = '';
+  const send = (path: string, method = 'GET', body?: unknown, origin = 'https://varcun.com', session = cookie) => fetch(base + path, { method, headers: { ...(session ? { Cookie: session } : {}), ...(body !== undefined ? { 'Content-Type': 'application/json', Origin: origin } : {}) }, ...(body !== undefined ? { body: JSON.stringify(body) } : {}) });
+  for (const path of ['/session', '/quotes', `/quotes/${fixture.state.quotes[0].id}`, '/content', '/content/history']) assert.equal((await send(path)).status, 401, path);
+  assert.equal((await send('/activate', 'POST', { email: fixture.email, password: fixture.password, token: 'x'.repeat(43) })).status, 403);
+  assert.equal(fixture.state.account, null);
+  const activation = await send('/activate', 'POST', { email: fixture.email, password: fixture.password, token: fixture.activationToken });
+  assert.equal(activation.status, 200);
+  assert.match(activation.headers.get('set-cookie')!, /HttpOnly/); assert.match(activation.headers.get('set-cookie')!, /SameSite=Strict/);
+  cookie = activation.headers.get('set-cookie')!.split(';')[0];
+  const activationBody = await activation.json(); assert.deepEqual(Object.keys(activationBody).sort(), ['admin', 'expiresAt']);
+  assert.equal(fixture.state.activation, null);
+  assert.equal((await send('/activate', 'POST', { email: fixture.email, password: 'Otra contraseña muy larga', token: fixture.activationToken })).status, 403);
+  assert.equal((await send('/login', 'POST', { email: fixture.email, password: 'incorrecta' })).status, 401);
+  const session = await send('/session'); assert.equal(session.status, 200); assert.equal(session.headers.get('cache-control'), 'no-store');
+  const inbox = await (await send('/quotes')).json(); assert.equal(inbox.total, 2); assert.equal('email' in inbox.quotes[0], false);
+  const quote = fixture.state.quotes[0];
+  const update = { status: 'en_revision', internal_notes: 'Revisar impresión', expectedUpdatedAt: quote.updated_at };
+  assert.equal((await send(`/quotes/${quote.id}`, 'PATCH', update, 'https://attacker.example')).status, 403);
+  assert.equal((await send(`/quotes/${quote.id}`, 'PATCH', update, '')).status, 403);
+  assert.equal(quote.status, 'nueva');
+  assert.equal((await send(`/quotes/${quote.id}`, 'PATCH', { ...update, quantity: 1 })).status, 400);
+  assert.equal((await send(`/quotes/${quote.id}`, 'PATCH', update)).status, 200);
+  assert.equal((await send(`/quotes/${quote.id}`, 'PATCH', update)).status, 409);
+  assert.equal((await send('/quotes?status=invalid')).status, 400);
+  assert.equal((await (await send('/quotes?search=Aurora')).json()).total, 1);
+  assert.equal((await send('/content', 'PUT', { data: { ...defaultContent, extra: 'unexpected' }, version: 1 })).status, 400);
+  const contentUpdate = { data: { ...defaultContent, heroTitle: 'Un proyecto diferente', seoTitle: 'Varcun & "tu marca"' }, version: 1 };
+  assert.equal((await send('/content', 'PUT', contentUpdate)).status, 200); assert.equal(published, 1);
+  assert.equal((await send('/content', 'PUT', contentUpdate)).status, 409); assert.equal(published, 1);
+  const history = await (await send('/content/history')).json(); assert.equal(history.revisions[0].data.heroTitle, defaultContent.heroTitle);
+  assert.equal((await send('/logout', 'POST', {})).status, 200); assert.equal((await send('/session')).status, 401);
+  const login = await send('/login', 'POST', { email: fixture.email, password: fixture.password }); assert.equal(login.status, 200);
+  cookie = login.headers.get('set-cookie')!.split(';')[0]; const oldCookie = cookie;
+  const changed = await send('/password', 'POST', { currentPassword: fixture.password, newPassword: 'Una contraseña nueva de prueba 2026' }); assert.equal(changed.status, 200);
+  cookie = changed.headers.get('set-cookie')!.split(';')[0];
+  assert.equal((await send('/session', 'GET', undefined, 'https://varcun.com', oldCookie)).status, 401);
+  assert.equal((await send('/session')).status, 200);
+  const lastSession = [...fixture.state.sessions.values()][0]; lastSession.expires_at = new Date(0).toISOString();
+  assert.equal((await send('/session')).status, 401);
+});
+
+test('password hashing is salted and rejects wrong credentials and malformed hashes', async () => {
+  const first = await hashPassword('Una contraseña larga de prueba');
+  const second = await hashPassword('Una contraseña larga de prueba');
+  assert.notEqual(first, second); assert.equal(await verifyPassword('Una contraseña larga de prueba', first), true);
+  assert.equal(await verifyPassword('incorrecta', first), false); assert.equal(await verifyPassword('incorrecta', 'broken'), false);
+  const session = newSession(first); assert.notEqual(session.token, session.token_hash); assert.equal(digest(session.token), session.token_hash);
+});
+
+test('content validation preserves defaults and escapes edited sharing text', () => {
+  assert.deepEqual(resolveContent(null), defaultContent);
+  assert.equal(contentSchema.safeParse({ ...defaultContent, heroTitle: '' }).success, false);
+  assert.equal(contentSchema.safeParse({ ...defaultContent, heroTitle: 'x'.repeat(91) }).success, false);
+  assert.equal(contentSchema.safeParse({ ...defaultContent, hiddenScript: '<script>' }).success, false);
+  const edited = { ...defaultContent, seoTitle: '<script>alert("x")</script>', seoDescription: 'Texto "con comillas" & otros signos.' };
+  const html = renderPageHtml('<!-- social-metadata:start --><!-- social-metadata:end -->', '/', edited);
+  assert.ok(html.includes('&lt;script&gt;')); assert.ok(!html.includes('<script>')); assert.ok(html.includes('&amp; otros signos.'));
+});
+
+test('production admin uses secure host cookies and rejects insecure transport', async t => {
+  const fixture = await adminFixture(true);
+  const app = express(); app.set('trust proxy', 1); app.use(express.json());
+  app.use(createAdminRouter({ store: fixture.store, secure: true, origins: ['https://varcun.com'] }));
+  const server = app.listen(0, '127.0.0.1'); await once(server, 'listening'); t.after(() => { server.closeAllConnections(); server.close(); });
+  const address = server.address(); assert.ok(address && typeof address !== 'string');
+  const url = `http://127.0.0.1:${address.port}/login`;
+  const body = JSON.stringify({ email: fixture.email, password: fixture.password });
+  const headers = { 'Content-Type': 'application/json', Origin: 'https://varcun.com' };
+  assert.equal((await fetch(url, { method: 'POST', headers, body })).status, 403);
+  const result = await fetch(url, { method: 'POST', headers: { ...headers, 'X-Forwarded-Proto': 'https' }, body });
+  assert.equal(result.status, 200); assert.match(result.headers.get('set-cookie')!, /^__Host-varcun_admin=/); assert.match(result.headers.get('set-cookie')!, /Secure/); assert.match(result.headers.get('set-cookie')!, /Path=\//);
+});

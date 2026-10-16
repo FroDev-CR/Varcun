@@ -13,6 +13,7 @@
 }
 
 @layer base {
+  .editable-lines { white-space: pre-line; }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; scroll-padding-top: 105px; }
   body { @apply m-0 bg-white font-sans text-navy antialiased; }

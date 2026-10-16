@@ -1,7 +1,7 @@
 import { pageMetadata } from '../server/site-metadata';
 
-export function updatePageMetadata(pathname: string) {
-  const metadata = pageMetadata(pathname);
+export function updatePageMetadata(pathname: string, content?: { seoTitle: string; seoDescription: string }) {
+  const metadata = pageMetadata(pathname, content);
   document.title = metadata.title;
   const tags = {
     'description': metadata.description,

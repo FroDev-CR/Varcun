@@ -2,5 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './styles.css';
+const AdminApp = React.lazy(() => import('./AdminApp'));
+const isAdmin = window.location.pathname === '/admin' || window.location.pathname.startsWith('/admin/');
 
-ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);
+ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><React.Suspense fallback={<div role="status">Abriendo Varcun…</div>}>{isAdmin ? <AdminApp /> : <App />}</React.Suspense></React.StrictMode>);

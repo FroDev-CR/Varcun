@@ -6,10 +6,16 @@ import { resolve } from 'node:path';
 import { readFileSync } from 'node:fs';
 import { quoteRow, quoteSchema } from './quote.js';
 import { pageMetadata, productFromPath, productHref, renderPageHtml } from './site-metadata.js';
+import { createAdminRouter } from './admin.js';
+import { createAdminStore } from './admin-store.js';
+import { createPublicContent } from './public-content.js';
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const database = process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY && process.env.SUPABASE_WRITE_KEY ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false }, global: { headers: { Authorization: `Bearer ${process.env.SUPABASE_WRITE_KEY}` } } }) : null;
+const publicDatabase = process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false }, global: { fetch: (url, options) => fetch(url, { ...options, signal: AbortSignal.timeout(2500) }) } }) : null;
+const adminDatabase = process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY && process.env.SUPABASE_ADMIN_KEY ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false }, global: { headers: { Authorization: `Bearer ${process.env.SUPABASE_ADMIN_KEY}` } } }) : null;
+const publicContent = createPublicContent(publicDatabase);
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
 function securityHeaders(secure: boolean) {
@@ -24,6 +30,8 @@ app.use((request, response, next) => {
   (secure ? httpsHeaders : httpHeaders)(request, response, next);
 });
 app.use(express.json({ limit: '24kb' }));
+app.get('/api/content', async (_request, response) => response.set('Cache-Control', 'no-cache').json({ content: await publicContent.read() }));
+app.use('/api/admin', createAdminRouter({ store: adminDatabase ? createAdminStore(adminDatabase) : null, secure: process.env.PUBLIC_HTTPS === 'true', origins: ['https://varcun.com', 'https://www.varcun.com', ...(process.env.NODE_ENV !== 'production' ? (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:3017').split(',') : [])], onPublish: () => publicContent.invalidate() }));
 
 app.get('/api/health', (_request, response) => response.json({ status: 'ok', quotesConfigured: Boolean(database) }));
 app.use('/api/quotes', rateLimit({ windowMs: 15 * 60_000, limit: 10, standardHeaders: 'draft-8', legacyHeaders: false, message: { message: 'Has enviado varias solicitudes. Espera unos minutos antes de intentar de nuevo.' } }));
@@ -52,11 +60,13 @@ app.use('/api', (_request, response) => response.status(404).json({ message: 'Ru
 app.get('/catalogo-2026.pdf', (_request, response) => response.redirect(302, '/catalogo-varcun-2026.pdf'));
 const pageTemplate = readFileSync(resolve('dist/index.html'), 'utf8');
 app.use(express.static(resolve('dist'), { index: false, maxAge: '1h', setHeaders(response, path) { if (path.includes('assets')) response.setHeader('Cache-Control', 'public, max-age=31536000, immutable'); } }));
-app.get('/{*path}', (request, response) => {
+app.get('/{*path}', async (request, response) => {
   const product = productFromPath(request.path);
   if (product && request.path !== productHref(product.code)) { response.redirect(308, productHref(product.code)); return; }
   const metadata = pageMetadata(request.path);
-  response.status(metadata.notFound ? 404 : 200).type('html').set('Cache-Control', 'no-cache').send(renderPageHtml(pageTemplate, request.path));
+  const isAdmin = request.path === '/admin' || request.path.startsWith('/admin/');
+  if (isAdmin) response.set({ 'X-Robots-Tag': 'noindex, nofollow', 'Referrer-Policy': 'no-referrer' });
+  response.status(isAdmin ? 200 : metadata.notFound ? 404 : 200).type('html').set('Cache-Control', isAdmin ? 'no-store' : 'no-cache').send(renderPageHtml(pageTemplate, request.path, isAdmin ? undefined : await publicContent.read()));
 });
 app.use((error: Error, _request: express.Request, response: express.Response, _next: express.NextFunction) => {
   const malformed = error instanceof SyntaxError;

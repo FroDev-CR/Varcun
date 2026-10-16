@@ -15,14 +15,15 @@ const pages: Record<string, { title: string; description: string }> = {
   '/cotizar': { title: 'Solicitar cotización · Varcun', description: 'Cuéntanos tu proyecto y solicita una cotización de productos personalizados, sin compromiso de compra.' },
 };
 
-export function pageMetadata(pathname: string) {
+export function pageMetadata(pathname: string, content?: { seoTitle: string; seoDescription: string }) {
   const path = pathname.split(/[?#]/, 1)[0].replace(/\/+$/, '') || '/';
   const product = productFromPath(path);
   const page = Object.hasOwn(pages, path) ? pages[path] : undefined;
   const notFound = !product && !page;
+  const isAdmin = path === '/admin' || path.startsWith('/admin/');
   return {
-    title: product ? `${product.name} · ${product.code} | Varcun` : page?.title ?? 'Página no encontrada · Varcun',
-    description: product ? [product.description, product.detail, 'Personalízalo con tu marca. Solicita tu cotización en Varcun.'].filter(Boolean).join(' ').slice(0, 320) : page?.description ?? 'Explora el catálogo de artículos promocionales de Varcun.',
+    title: isAdmin ? 'Administración · Varcun' : product ? `${product.name} · ${product.code} | Varcun` : path === '/' && content ? content.seoTitle : page?.title ?? 'Página no encontrada · Varcun',
+    description: isAdmin ? 'Acceso privado a la administración de Varcun.' : product ? [product.description, product.detail, 'Personalízalo con tu marca. Solicita tu cotización en Varcun.'].filter(Boolean).join(' ').slice(0, 320) : path === '/' && content ? content.seoDescription : page?.description ?? 'Explora el catálogo de artículos promocionales de Varcun.',
     url: `${SITE_ORIGIN}${product ? productHref(product.code) : path}`,
     image: `${SITE_ORIGIN}/images/compartir/${product ? product.code.toLowerCase() : 'varcun'}-v1.jpg`,
     imageAlt: product ? `${product.name}, referencia ${product.code} · Varcun` : 'Logo Varcun · Tu idea, nuestra impresión',
@@ -57,6 +58,6 @@ export function metadataTags(metadata: ReturnType<typeof pageMetadata>) {
     <meta name="twitter:image:alt" content="${value('imageAlt')}" />`;
 }
 
-export function renderPageHtml(template: string, pathname: string) {
-  return template.replace(/<!-- social-metadata:start -->[\s\S]*?<!-- social-metadata:end -->/, () => `<!-- social-metadata:start -->\n    ${metadataTags(pageMetadata(pathname))}\n    <!-- social-metadata:end -->`);
+export function renderPageHtml(template: string, pathname: string, content?: { seoTitle: string; seoDescription: string }) {
+  return template.replace(/<!-- social-metadata:start -->[\s\S]*?<!-- social-metadata:end -->/, () => `<!-- social-metadata:start -->\n    ${metadataTags(pageMetadata(pathname, content))}\n    <!-- social-metadata:end -->`);
 }
